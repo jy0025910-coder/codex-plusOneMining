@@ -1,0 +1,11 @@
+work/
+__pycache__/
+*.pyc
+*.lock
+*.blend1
+outputs/*.rbxlx
+!outputs/晶脉峡谷_三区矿洞初稿.rbxlx
+outputs/矿工店员_近景.jpg
+outputs/收矿摊_实景.jpg
+outputs/收矿摊_精修实景.jpg
+outputs/收矿摊_绿色光幕.jpg

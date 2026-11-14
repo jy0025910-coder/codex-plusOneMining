@@ -1,0 +1,56 @@
+{
+  "source_place": "晶脉峡谷.rbxlx",
+  "source_sha256": "aca6524714b444a049bb3c0967078923b41c238491727c6cad877086675b096a",
+  "place": "晶脉峡谷_收矿站.rbxlx",
+  "assets": [
+    {
+      "id": "World.CanyonTown",
+      "location": "Workspace.Gem Gulch",
+      "role": "Existing authored town environment"
+    },
+    {
+      "id": "Building.MarketStall",
+      "location": "ServerStorage.GameAssets.Buildings.MarketStall",
+      "role": "Configurable canopy, counter, sign, mounts"
+    },
+    {
+      "id": "Character.ProspectorMerchant",
+      "location": "ServerStorage.GameAssets.Characters.ProspectorMerchant",
+      "role": "参考矿工的收矿店员，微笑并向前伸手"
+    },
+    {
+      "id": "Interaction.AutoSellZone",
+      "location": "ServerStorage.GameAssets.Interactions.AutoSellZone",
+      "role": "Flat visual footprint and tagged server trigger"
+    },
+    {
+      "id": "Prop.OreCounterDisplay",
+      "location": "ServerStorage.GameAssets.Props.OreCounterDisplay",
+      "role": "Single mint crystal specimen on a wooden tray"
+    },
+    {
+      "id": "Station.OreBuyer",
+      "location": "ServerStorage.GameAssets.Stations.OreBuyer",
+      "role": "Complete composed prefab, placed in Workspace.Gem Gulch.OreBuyer"
+    }
+  ],
+  "capacity": 5,
+  "provenance": "角色外观取自用户放入场景的 Workspace.Miner。服装和帽子使用原模型关联的 Roblox 资源。",
+  "characterStyle": {
+    "reference": "Character.ProspectorMerchant",
+    "rig": "R15",
+    "shirtTexture": 6286435681,
+    "pantsTexture": 635773676,
+    "helmetMesh": 7519603751,
+    "helmetTexture": 7519514799,
+    "bodyMaterial": "Plastic",
+    "reflectance": 0
+  },
+  "stallVisuals": {
+    "assetVersion": 3,
+    "canopy": "Five broad curved green and cream stripes, hanging hem",
+    "zone": "Four continuous vertical gradient curtains, fading from green at the bottom to transparent at the top, with sparse star particles.",
+    "saleTrigger": "Existing OreSellZone authority and dimensions"
+  },
+  "externalSamplesRemoved": true
+}
