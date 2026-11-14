@@ -1,7 +1,7 @@
 {
   "source_place": "晶脉峡谷.rbxlx",
   "source_sha256": "aca6524714b444a049bb3c0967078923b41c238491727c6cad877086675b096a",
-  "place": "晶脉峡谷_收矿站.rbxlx",
+  "place": "晶脉峡谷_三区矿洞初稿.rbxlx",
   "assets": [
     {
       "id": "World.CanyonTown",
@@ -32,10 +32,24 @@
       "id": "Station.OreBuyer",
       "location": "ServerStorage.GameAssets.Stations.OreBuyer",
       "role": "Complete composed prefab, placed in Workspace.Gem Gulch.OreBuyer"
+    },
+    {
+      "id": "Tool.IronPickaxe",
+      "location": "ServerStorage.GameAssets.Tools.IronPickaxe",
+      "role": "铁头、木柄、皮革握把，7 个正式 MeshPart；隐形 Handle 与 WeldConstraint",
+      "source": "资产/源文件/MiningAssets.blend",
+      "prefab": "资产/导出/IronPickaxe.rbxmx"
+    },
+    {
+      "id": "Rock.SandstoneOre",
+      "location": "ServerStorage.GameAssets.Ores.SandstoneOre",
+      "role": "砂岩主体与嵌入矿物，8 个正式 MeshPart；MeshRole 和 BaseColor 支持换色",
+      "source": "资产/源文件/MiningAssets.blend",
+      "prefab": "资产/导出/SandstoneOre.rbxmx"
     }
   ],
   "capacity": 5,
-  "provenance": "角色外观取自用户放入场景的 Workspace.Miner。服装和帽子使用原模型关联的 Roblox 资源。",
+  "provenance": "NPC 质感参考用户放入场景、位于收矿摊旁并持镐的 Dummy。新增铁镐与岩石根据本项目三视图在 Blender 制作，通过 Studio 原生 3D 导入上传至当前 Roblox 账号。",
   "characterStyle": {
     "reference": "Character.ProspectorMerchant",
     "rig": "R15",
@@ -52,5 +66,29 @@
     "zone": "Four continuous vertical gradient curtains, fading from green at the bottom to transparent at the top, with sparse star particles.",
     "saleTrigger": "Existing OreSellZone authority and dimensions"
   },
-  "externalSamplesRemoved": true
+  "externalSamplesRemoved": true,
+  "playerAppearance": {
+    "LoadCharacterAppearance": true,
+    "policy": "使用加入玩家自己的 Roblox 形象与服装"
+  },
+  "miningPolish": {
+    "date": "2026-11-14",
+    "server": [
+      "MiningAssets",
+      "MiningMotion",
+      "MiningService"
+    ],
+    "client": [
+      "MiningAnimator",
+      "MiningFeedback",
+      "DigController"
+    ],
+    "meshRegistry": "资产/导出/NativeMeshRegistry.json",
+    "validated": "单客户端 R15；原文件保存重开；训练、点击、第一层、五格、出售、重生",
+    "notValidated": [
+      "R6 完整流程",
+      "多客户端",
+      "真实手机"
+    ]
+  }
 }

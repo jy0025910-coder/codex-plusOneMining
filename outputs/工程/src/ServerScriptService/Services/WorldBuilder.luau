@@ -2,6 +2,7 @@ local Config = require(game.ReplicatedStorage.Shared.PrototypeConfig)
 local Visuals = require(script.Parent.ZoneVisuals)
 local Factory = require(script.Parent.MerchantAssets)
 local assets = game.ServerStorage.GameAssets
+local MiningAssets = require(script.Parent.MiningAssets)
 local Builder = {}
 local V, C = Vector3.new, CFrame.new
 local sand = Color3.fromRGB(218,177,119)
@@ -68,29 +69,9 @@ end
 local function ore(parent,name,pos,color,crystal)
     local m=model(parent,name)
     local main=part(m,"Target",V(4.8,3.8,4.2),C(pos+V(0,2.2,0)),color,true)
-    main.Shape=Enum.PartType.Ball
-    if crystal then
-        main.Color=Color3.fromRGB(110,109,100)
-        for i=1,5 do
-            local a=i*2.4
-            local p=part(m,"Crystal",V(1.0,2.7+i%2,1.05),C(pos+V(math.cos(a)*1.5,3.1,math.sin(a)*1.2))*CFrame.Angles(.12, a, .22*math.cos(a)),color,true)
-            -- Editable wedges provide tips without remote mesh dependencies.
-            local w=Instance.new("WedgePart")
-            w.Name="Crystal tip"
-            w.Size=V(1.0,.9,1.05)
-            w.CFrame=p.CFrame*C(0,p.Size.Y/2+.44,0)
-            w.Color=color:Lerp(Color3.new(1,1,1),.15)
-            w.Material=Enum.Material.SmoothPlastic
-            w.Anchored=true
-            w.Parent=m
-        end
-    else
-        for i=1,4 do
-            local p=part(m,"Sandstone chunk",V(2.2,2.4,2.2),C(pos+V(math.cos(i*1.7)*1.8,1.5,math.sin(i*1.7)*1.4))*CFrame.Angles(.2,i,.3),color,true)
-            p.Shape=Enum.PartType.Ball
-        end
-    end
     m.PrimaryPart=main
+    local index=tonumber(name:match("%d+")) or 1
+    MiningAssets.ReplaceRock(m,index,name:find("TrainingRock")~=nil,color)
     return m,main
 end
 local function board(parent,x,title,color,kind)
@@ -189,7 +170,7 @@ function Builder.Build()
             Color=cfg.Color,Tag="TrainingZone",Attributes={TrainingIndex=i,Gain=cfg.Gain,RequiredPower=cfg.Required},
         })
         local m,target=ore(training,"TrainingRock"..i,V(-35,.2,z),cfg.Color,i>1)
-        target.CanQuery=false
+        target.CanQuery=true
         m:SetAttribute("TrainingIndex",i)
         label(m,"Training label",C(-35,7.7,z),Vector2.new(13,2.2),cfg.Name.."\n+"..cfg.Gain.." 力量 / 次"..(cfg.Required>0 and (" · 需 "..cfg.Required) or ""))
     end

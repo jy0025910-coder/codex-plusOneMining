@@ -1,9 +1,7 @@
+require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("MiningAnimator")).Start()
 local Players=game:GetService("Players")
 local UIS=game:GetService("UserInputService")
 local Run=game:GetService("RunService")
-local Tween=game:GetService("TweenService")
-local Debris=game:GetService("Debris")
-local Collection=game:GetService("CollectionService")
 local p=Players.LocalPlayer
 local wire=game.ReplicatedStorage:WaitForChild("DigCamp")
 local cfg=require(game.ReplicatedStorage.Shared.PrototypeConfig)
@@ -12,6 +10,9 @@ local camp=workspace:WaitForChild("Gem Gulch")
 local gui=p:WaitForChild("PlayerGui"):WaitForChild("FieldKit")
 gui:ClearAllChildren()
 gui.ResetOnSpawn=false
+local FeedbackEffects = require(game.ReplicatedStorage.Shared.MiningFeedback)
+local feedbackEffects = FeedbackEffects.new(gui,p)
+local GuiService = game:GetService("GuiService")
 local function text(name,parent,size,pos,fontSize)
     local t=Instance.new("TextLabel")
     t.Name=name;t.Size=size;t.Position=pos
@@ -61,7 +62,7 @@ local function refresh()
         table.insert(names,ore and (ore.Name.." "..ore.Value.."金")or "空格")
     end
     slots.Text=table.concat(names,"  |  ")
-    guide.Text=count>=5 and "背包满了 · 返回摊位，走进绿色光幕出售" or training>0 and "正在自动敲矿训练 · 离开光幕即可停止" or "左侧训练增长力量  ·  前方敲墙进入矿洞  ·  点击 / F 键敲击"
+    guide.Text=count>=5 and "背包满了 · 返回摊位，走进绿色光幕出售" or training>0 and "正在自动敲矿训练 · 离开光幕即可停止" or "点击 +1 力量  ·  走进左侧练习区自动敲击  ·  前方进入矿洞"
     for i=1,#cfg.Layers do
         local layer=camp.Mine:FindFirstChild("Layer"..i)
         if layer then
@@ -93,18 +94,25 @@ local mouse=p:GetMouse()
 local hovered
 local function findTarget(part)
     if not part then return nil end
-    if part:HasTag("MineTarget")then return part end
+    if part:HasTag("MineTarget") or part:HasTag("TrainingTarget")then return part end
     local model=part:FindFirstAncestorOfClass("Model")
     local target=model and model:FindFirstChild("Target")
-    return target and target:HasTag("MineTarget") and target or nil
+    return target and (target:HasTag("MineTarget") or target:HasTag("TrainingTarget")) and target or nil
 end
 local function send(part)
     local target=findTarget(part)
-    if target then wire.Dig:FireServer(target)end
+    if target and target:HasTag("MineTarget") then
+        wire.Dig:FireServer(target)
+    else
+        wire.Practice:FireServer(target)
+    end
 end
 UIS.InputBegan:Connect(function(input,processed)
     if processed then return end
-    if input.UserInputType==Enum.UserInputType.MouseButton1 then send(mouse.Target)
+    if input.UserInputType==Enum.UserInputType.MouseButton1 then
+        local inset = GuiService:GetGuiInset()
+        feedbackEffects:ClickRing(UIS:GetMouseLocation()-inset)
+        send(mouse.Target)
     elseif input.KeyCode==Enum.KeyCode.F or input.KeyCode==Enum.KeyCode.ButtonX then send(hovered)end
 end)
 UIS.TouchTapInWorld:Connect(function(pos,processed)
@@ -113,11 +121,15 @@ UIS.TouchTapInWorld:Connect(function(pos,processed)
     local ray=cam:ViewportPointToRay(pos.X,pos.Y)
     local params=RaycastParams.new();params.FilterType=Enum.RaycastFilterType.Exclude;params.FilterDescendantsInstances={p.Character}
     local result=workspace:Raycast(ray.Origin,ray.Direction*100,params)
-    if result then send(result.Instance)end
+    local inset = GuiService:GetGuiInset()
+    feedbackEffects:ClickRing(pos-inset)
+    send(result and result.Instance or nil)
 end)
 Run.RenderStepped:Connect(function()
     hovered=findTarget(mouse.Target)
-    if hovered and targetText:GetAttribute("Busy")~=true then
+    if hovered and hovered:GetAttribute("TargetKind")=="Training" and targetText:GetAttribute("Busy")~=true then
+        targetText.Text="点击练习  ·  +1 力量"
+    elseif hovered and targetText:GetAttribute("Busy")~=true then
         local layer=hovered:GetAttribute("LayerIndex")
         local hp=hovered:GetAttribute("TargetKind")=="Gate" and p:GetAttribute("Gate"..layer.."HP")or hovered:GetAttribute("MaxHealth")
         targetText.Text=hp>0 and ("点击敲击  ·  耐久 "..hp.."  ·  每次伤害 "..(p:GetAttribute("Power")or 1))or ""
@@ -128,27 +140,12 @@ local function announce(value)
     noticeId+=1;local id=noticeId;toast.Text=value
     task.delay(2.2,function()if noticeId==id then toast.Text=""end end)
 end
-local toolGrip
-local function swing()
-    local tool=p.Character and p.Character:FindFirstChildOfClass("Tool")
-    if not tool then return end
-    toolGrip=toolGrip or tool.Grip
-    tool.Grip=toolGrip*CFrame.Angles(-.8,0,.15)
-    Tween:Create(tool,TweenInfo.new(.23),{Grip=toolGrip}):Play()
-end
-local function popup(target,value)
-    local g=Instance.new("BillboardGui")
-    g.Name="HitReading";g.Adornee=target;g.Size=UDim2.fromOffset(180,42);g.StudsOffset=Vector3.new(0,4.5,0);g.AlwaysOnTop=true;g.Parent=gui
-    local t=text("Value",g,UDim2.fromScale(1,1),UDim2.fromScale(0,0),23);t.Text=value;t.TextColor3=Color3.fromRGB(174,255,205);t.TextStrokeTransparency=.15;t.TextXAlignment=Enum.TextXAlignment.Center
-    Tween:Create(g,TweenInfo.new(.65),{StudsOffset=Vector3.new(0,6,0)}):Play()
-    Tween:Create(t,TweenInfo.new(.65),{TextTransparency=1}):Play();Debris:AddItem(g,.7)
-end
 wire.Feedback.OnClientEvent:Connect(function(mode,a,b,c)
     if mode=="note"then announce(a)
     elseif mode=="sale"then announce("已售出 "..b.." 块矿石  +"..a.." 金币")
-    elseif mode=="train"then swing();popup(a,"+"..b.." 力量")
+    elseif mode=="train" or mode=="practice" then feedbackEffects:Stroke(a,b)
     elseif mode=="hit"then
-        swing();popup(a,"-"..(p:GetAttribute("Power")or 1))
+        feedbackEffects:Stroke(a,1)
         targetText:SetAttribute("Busy",true);targetText.Text="剩余耐久 "..b.."/"..c
         task.delay(.5,function()targetText:SetAttribute("Busy",false)end)
     end
@@ -161,4 +158,4 @@ local function view(character)
     cam.CFrame=CFrame.lookAt(root.Position+Vector3.new(0,10,24),root.Position+Vector3.new(0,2,-5))
 end
 if p.Character then task.spawn(view,p.Character)end
-p.CharacterAdded:Connect(function(char)toolGrip=nil;view(char)end)
+p.CharacterAdded:Connect(view)

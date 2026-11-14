@@ -4,6 +4,8 @@ local RunService = game:GetService("RunService")
 local Inventory = require(script.Parent.InventoryService)
 local Config = require(game.ReplicatedStorage.Shared.PrototypeConfig)
 local Catalog = require(game.ReplicatedStorage.Shared.OreCatalog)
+local Equipment = require(script.Parent.MiningAssets)
+local Motion = require(script.Parent.MiningMotion)
 local wire = game.ReplicatedStorage.DigCamp
 local Service = {}
 local states = {}
@@ -42,11 +44,7 @@ local function init(player)
         local h=character:WaitForChild("Humanoid",10)
         local backpack=player:WaitForChild("Backpack",10)
         if not h or not backpack or player.Character~=character then return end
-        local tool=game.ServerStorage["勘探铲"]:Clone()
-        tool.Name="矿镐"
-        tool.CanBeDropped=false
-        tool.Parent=backpack
-        h:EquipTool(tool)
+        Equipment.Equip(player, character, h, backpack)
     end
     player.CharacterAdded:Connect(equip)
     if player.Character then task.spawn(equip,player.Character)end
@@ -58,7 +56,7 @@ function Service.Hit(player,target)
     if not target:IsDescendantOf(camp.Mine) or not target:HasTag("MineTarget") then return end
     if not within(player,target,19) or os.clock()-state.lastHit<Config.HitInterval then return end
     local character=player.Character
-    if not character:FindFirstChild("矿镐") then return end
+    if not Equipment.GetEquipped(character) then return end
     local index=target:GetAttribute("LayerIndex")
     if typeof(index)~="number" or not Config.Layers[index] then return end
     state.lastHit=os.clock()
@@ -66,6 +64,9 @@ function Service.Hit(player,target)
     if kind=="Gate" then
         if index~=state.unlocked+1 then return end
         local hp=math.max(0,state.gates[index]-state.power)
+        state.power += 1
+        player:SetAttribute("Power",state.power)
+        Motion.Play(player,target)
         state.gates[index]=hp
         player:SetAttribute("Gate"..index.."HP",hp)
         wire.Feedback:FireClient(player,"hit",target,hp,Config.Layers[index].WallHealth)
@@ -81,6 +82,9 @@ function Service.Hit(player,target)
     local health=state.nodes[target] or Config.Layers[index].OreHealth
     health=math.max(0,health-state.power)
     state.nodes[target]=health
+    state.power += 1
+    player:SetAttribute("Power",state.power)
+    Motion.Play(player,target)
     wire.Feedback:FireClient(player,"hit",target,health,Config.Layers[index].OreHealth)
     if health==0 then
         local roll=rng:NextNumber()
@@ -98,12 +102,30 @@ function Service.Hit(player,target)
     end
 end
 
+function Service.Practice(player, target)
+    local state = states[player]
+    if not state or not living(player) or not Equipment.GetEquipped(player.Character) then return end
+    if os.clock() - state.lastHit < .35 then return end
+    if target ~= nil then
+        if typeof(target) ~= "Instance" or not target:IsA("BasePart") then return end
+        if not target:IsDescendantOf(camp.Training) or not target:HasTag("TrainingTarget") then return end
+        if not within(player,target,19) then return end
+        local index = target:GetAttribute("TrainingIndex")
+        if not Config.Trainings[index] or state.power < Config.Trainings[index].Required then return end
+    end
+    state.lastHit = os.clock()
+    state.power += 1
+    player:SetAttribute("Power",state.power)
+    Motion.Play(player,target)
+    wire.Feedback:FireClient(player,"practice",target,1)
+end
+
 local function stepTraining(dt)
     for player,state in states do
         local root=living(player)
         local gain=0
         local rock
-        if root then
+        if root and Equipment.GetEquipped(player.Character) then
             for _,zone in Collection:GetTagged("TrainingZone")do
                 if not zone:IsDescendantOf(camp) then continue end
                 local p=zone.CFrame:PointToObjectSpace(root.Position)
@@ -119,6 +141,7 @@ local function stepTraining(dt)
                 break
             end
         end
+        if gain == 0 and (player:GetAttribute("TrainingGain") or 0) > 0 then Motion.Stop(player) end
         player:SetAttribute("TrainingGain",gain)
         if gain>0 then
             state.training+=dt
@@ -126,6 +149,7 @@ local function stepTraining(dt)
                 state.training=0
                 state.power+=gain
                 player:SetAttribute("Power",state.power)
+                Motion.Play(player,rock)
                 wire.Feedback:FireClient(player,"train",rock,gain)
             end
         else
@@ -165,9 +189,10 @@ function Service.Start()
     started=true
     camp=require(script.Parent.WorldBuilder).Build()
     Players.PlayerAdded:Connect(init)
-    Players.PlayerRemoving:Connect(function(p)states[p]=nil end)
+    Players.PlayerRemoving:Connect(function(p)states[p]=nil;Motion.Stop(p)end)
     for _,p in Players:GetPlayers()do init(p)end
     wire.Dig.OnServerEvent:Connect(Service.Hit)
+    wire:WaitForChild("Practice").OnServerEvent:Connect(Service.Practice)
     local returnEvent=wire:FindFirstChild("ReturnToCamp")
     if not returnEvent then
         returnEvent=Instance.new("RemoteEvent")
