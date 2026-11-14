@@ -1,6 +1,7 @@
+local Style = require(script.Parent.MiningStyle)
 return {
     Version = 1,
-    TrainingInterval = .8,
+    TrainingInterval = .8 / Style.AutoSwingSpeed,
     HitInterval = .38,
     Trainings = {
         {Name="砂岩练习石", Gain=1, Required=0, Color=Color3.fromRGB(199,151,98)},

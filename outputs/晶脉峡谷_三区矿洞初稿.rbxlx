@@ -132,27 +132,27 @@
 		<Item class="Camera" referent="RBX1544">
 			<Properties>
 				<CoordinateFrame name="CFrame">
-					<X>-19.4824772</X>
-					<Y>5.91032267</Y>
-					<Z>21.79245</Z>
-					<R00>0.854081094</R00>
-					<R01>-0.174713075</R01>
-					<R02>0.489919335</R02>
+					<X>5.60102463</X>
+					<Y>10.771348</Y>
+					<Z>8.6052866</Z>
+					<R00>0.891468763</R00>
+					<R01>-0.136451036</R01>
+					<R02>0.43204695</R02>
 					<R10>-0</R10>
-					<R11>0.941899061</R11>
-					<R12>0.335896224</R12>
-					<R20>-0.520140052</R20>
-					<R21>-0.286882609</R21>
-					<R22>0.804458022</R22>
+					<R11>0.953573048</R11>
+					<R12>0.301161796</R12>
+					<R20>-0.453082144</R20>
+					<R21>-0.268476337</R21>
+					<R22>0.850080609</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">63.0000038</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>-36.1628189</X>
-					<Y>-5.52597666</Y>
-					<Z>-5.59702921</Z>
+					<X>4.73693085</X>
+					<Y>10.1690245</Y>
+					<Z>6.90512562</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -167654,7 +167654,7 @@ end
 wire.Feedback.OnClientEvent:Connect(function(mode,a,b,c)
     if mode=="note"then announce(a)
     elseif mode=="sale"then announce("已售出 "..b.." 块矿石  +"..a.." 金币")
-    elseif mode=="train" or mode=="practice" then feedbackEffects:Stroke(a,b)
+    elseif mode=="train" or mode=="practice" then feedbackEffects:Stroke(a,b,c)
     elseif mode=="hit"then
         feedbackEffects:Stroke(a,1)
         targetText:SetAttribute("Busy",true);targetText.Text="剩余耐久 "..b.."/"..c
@@ -168161,9 +168161,10 @@ return OreCatalog
 			<Item class="ModuleScript" referent="ASSET980001">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
-					<ProtectedString name="Source"><![CDATA[return {
+					<ProtectedString name="Source"><![CDATA[local Style = require(script.Parent.MiningStyle)
+return {
     Version = 1,
-    TrainingInterval = .8,
+    TrainingInterval = .8 / Style.AutoSwingSpeed,
     HitInterval = .38,
     Trainings = {
         {Name="砂岩练习石", Gain=1, Required=0, Color=Color3.fromRGB(199,151,98)},
@@ -168194,6 +168195,7 @@ return OreCatalog
 					<Content name="LinkedSource"><null></null></Content>
 					<ProtectedString name="Source"><![CDATA[local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
+local Style = require(script.Parent.MiningStyle)
 local Feedback = {}
 Feedback.__index = Feedback
 
@@ -168305,15 +168307,14 @@ function Feedback:Impact(target)
     Debris:AddItem(sound, 1.2)
 end
 
-function Feedback:Stroke(target, amount)
-    task.delay(.27, function()
+function Feedback:Stroke(target, amount, speed)
+    task.delay(Style.ImpactTime / (speed or 1), function()
         self:Impact(target)
         if amount and amount > 0 then self:Power(amount) end
     end)
 end
 
 return Feedback
-
 ]]></ProtectedString>
 					<string name="ScriptGuid">{14DD788E-496A-478E-ADE7-C6AC71DC028A}</string>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -168333,19 +168334,31 @@ return Feedback
 					<ProtectedString name="Source"><![CDATA[-- Procedural mining poses evaluated after the Animator. Supports Motor6D and AnimationConstraint.
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local Style = require(script.Parent.MiningStyle)
 local Animator = {}
 local started = false
 local scopes = {}
 local aliases = {
     RightShoulder = {"RightShoulder", "Right Shoulder"},
     LeftShoulder = {"LeftShoulder", "Left Shoulder"},
-    RightElbow = {"RightElbow"}, LeftElbow = {"LeftElbow"}, Waist = {"Waist"},
+    RightElbow = {"RightElbow"}, LeftElbow = {"LeftElbow"}, RightWrist = {"RightWrist"}, Waist = {"Waist"},
 }
 local function pose(raise, elbow, lean)
     return {RightShoulder=Vector3.new(raise, 0, -9), LeftShoulder=Vector3.new(raise*.55, 0, 13),
-        RightElbow=Vector3.new(elbow, 0, 0), LeftElbow=Vector3.new(elbow*.6, 0, 0), Waist=Vector3.new(lean, 0, 0)}
+        RightElbow=Vector3.new(elbow, 0, 0), LeftElbow=Vector3.new(elbow*.6, 0, 0), RightWrist=Vector3.zero, Waist=Vector3.new(lean, 0, 0)}
 end
 local raised, impact = pose(153, 28, -6), pose(0, 7, 12)
+local carry = {RightShoulder=Vector3.new(90, 0, 0), RightElbow=Vector3.new(90, 0, 0), RightWrist=Vector3.zero}
+local function authored(record, angle)
+    local rotation = CFrame.Angles(math.rad(angle.X), math.rad(angle.Y), math.rad(angle.Z))
+    return record.basis:Inverse() * rotation * record.basis
+end
+local function equipped(character)
+    for _, child in character:GetChildren() do
+        if child:IsA("Tool") and child:GetAttribute("AssetId")=="Tool.IronPickaxe" then return true end
+    end
+    return false
+end
 local function bind(character)
     local scope = {character=character, joints={}}
     for name, names in aliases do
@@ -168380,30 +168393,29 @@ function Animator.Start()
         local now = workspace:GetServerTimeNow()
         for _, player in Players:GetPlayers() do
             local character = player.Character
-            local start = character and character:GetAttribute("MiningStrokeAt")
-            if not start then continue end
-            local t = now - start
-            if t < 0 or t >= .60 then continue end
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            if not humanoid or humanoid.Health <= 0 or not equipped(character) then continue end
+            local start = character:GetAttribute("MiningStrokeAt")
+            local t = start and math.max(0, (now-start)*(character:GetAttribute("MiningStrokeSpeed") or 1)) or Style.StrokeDuration
             local scope = scopes[character] or bind(character)
-            local first, second, alpha, weight
-            if t < .17 then
-                first, second, alpha, weight = raised, raised, 0, 1-(1-t/.17)^2
-            elseif t < .27 then
-                first, second, alpha, weight = raised, impact, 1-(1-(t-.17)/.10)^2, 1
-            elseif t < .34 then
+            local first, second, alpha, weight = raised, raised, 0, 0
+            if t >= 0 and t < Style.WindupTime then
+                weight = 1-(1-t/Style.WindupTime)^2
+            elseif t < Style.ImpactTime then
+                first, second, alpha, weight = raised, impact, 1-(1-(t-Style.WindupTime)/(Style.ImpactTime-Style.WindupTime))^2, 1
+            elseif t < Style.HoldTime then
                 first, second, alpha, weight = impact, impact, 0, 1
-            else
-                first, second, alpha, weight = impact, impact, 0, (1-(t-.34)/.26)^2
+            elseif t < Style.StrokeDuration then
+                first, second, alpha, weight = impact, impact, 0, (1-(t-Style.HoldTime)/(Style.StrokeDuration-Style.HoldTime))^2
             end
             for name, record in scope.joints do
                 local joint = record.joint
                 if not joint.Parent then continue end
                 local a = first[name]:Lerp(second[name], alpha)
-                local rotation = CFrame.Angles(math.rad(a.X), math.rad(a.Y), math.rad(a.Z))
-                local authored = record.basis:Inverse() * rotation * record.basis
                 record.base = joint.Transform
                 record.applied = true
-                joint.Transform = record.base:Lerp(authored, weight)
+                local rest = carry[name] and authored(record, carry[name]) or record.base
+                joint.Transform = rest:Lerp(authored(record, a), weight)
             end
         end
     end)
@@ -168421,6 +168433,31 @@ return Animator
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					<UniqueId name="UniqueId">788c2288bf3e1ea10b09fff7000035ed</UniqueId>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXA032B80D58DA408692EA35D562ABC360">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Shared presentation timing keeps automatic swings and impact feedback aligned.
+return {
+    AutoSwingSpeed = 1.5,
+    Grip = CFrame.Angles(0, math.rad(90), 0),
+    WindupTime = .17,
+    ImpactTime = .27,
+    HoldTime = .34,
+    StrokeDuration = .60,
+}
+]]></ProtectedString>
+					<string name="ScriptGuid">{C2CD5B83-1AFA-418B-BBAE-F0964636D704}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">MiningStyle</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">788c2288bf3e1ea10b09fff700004b40</UniqueId>
 				</Properties>
 			</Item>
 		</Item>
@@ -168626,6 +168663,7 @@ local Config = require(game.ReplicatedStorage.Shared.PrototypeConfig)
 local Catalog = require(game.ReplicatedStorage.Shared.OreCatalog)
 local Equipment = require(script.Parent.MiningAssets)
 local Motion = require(script.Parent.MiningMotion)
+local Style = require(game.ReplicatedStorage.Shared.MiningStyle)
 local wire = game.ReplicatedStorage.DigCamp
 local Service = {}
 local states = {}
@@ -168766,11 +168804,11 @@ local function stepTraining(dt)
         if gain>0 then
             state.training+=dt
             if state.training>=Config.TrainingInterval then
-                state.training=0
+                state.training-=Config.TrainingInterval
                 state.power+=gain
                 player:SetAttribute("Power",state.power)
-                Motion.Play(player,rock)
-                wire.Feedback:FireClient(player,"train",rock,gain)
+                Motion.Play(player,rock,Style.AutoSwingSpeed)
+                wire.Feedback:FireClient(player,"train",rock,gain,Style.AutoSwingSpeed)
             end
         else
             state.training=0
@@ -168844,13 +168882,12 @@ function Service.Start()
     local accumulator,boards=0,0
     RunService.Heartbeat:Connect(function(dt)
         accumulator+=dt;boards+=dt
-        if accumulator>=.15 then local elapsed=accumulator;accumulator=0;stepTraining(elapsed)end
+        if accumulator>=.05 then local elapsed=accumulator;accumulator=0;stepTraining(elapsed)end
         if boards>=2 then boards=0;updateBoards()end
     end)
 end
 
 return Service
-
 ]]></ProtectedString>
 					<string name="ScriptGuid">{D8052504-5F55-4819-9CEA-2499179F3613}</string>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -169229,6 +169266,7 @@ return Builder
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<ProtectedString name="Source"><![CDATA[local Players = game:GetService("Players")
+local Style = require(game.ReplicatedStorage.Shared.MiningStyle)
 local Motion = {}
 local scopes = {}
 
@@ -169236,11 +169274,14 @@ function Motion.Stop(player)
     local scope = scopes[player]
     if not scope then return end
     scopes[player] = nil
-    if scope.character.Parent then scope.character:SetAttribute("MiningStrokeAt", nil) end
+    if scope.character.Parent then
+        scope.character:SetAttribute("MiningStrokeAt", nil)
+        scope.character:SetAttribute("MiningStrokeSpeed", nil)
+    end
     if scope.humanoid.Parent then scope.humanoid.AutoRotate = scope.autoRotate end
 end
 
-function Motion.Play(player, target)
+function Motion.Play(player, target, speed)
     local character = player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     local root = character and character:FindFirstChild("HumanoidRootPart")
@@ -169255,8 +169296,10 @@ function Motion.Play(player, target)
         if (goal - root.Position).Magnitude > .2 then root.CFrame = CFrame.lookAt(root.Position, goal) end
     end
     humanoid.AutoRotate = false
+    speed = speed or 1
+    character:SetAttribute("MiningStrokeSpeed", speed)
     character:SetAttribute("MiningStrokeAt", workspace:GetServerTimeNow())
-    task.delay(.60, function()
+    task.delay(Style.StrokeDuration / speed, function()
         if scopes[player] == scope then Motion.Stop(player) end
     end)
 end
@@ -169280,6 +169323,7 @@ return Motion
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<ProtectedString name="Source"><![CDATA[local assets = game:GetService("ServerStorage"):WaitForChild("GameAssets")
+local Style = require(game.ReplicatedStorage.Shared.MiningStyle)
 local Factory = {}
 
 function Factory.GetEquipped(character)
@@ -169298,6 +169342,7 @@ function Factory.Equip(player, character, humanoid, backpack)
     if current then return current end
     local tool = assets.Tools.IronPickaxe:Clone()
     tool.Name = "铁镐"
+    tool.Grip = Style.Grip
     for _, part in tool:GetDescendants() do
         if part:IsA("BasePart") then
             part.Anchored = false
@@ -169361,7 +169406,6 @@ function Factory.ReplaceRock(model, index, isTraining, color)
 end
 
 return Factory
-
 ]]></ProtectedString>
 					<string name="ScriptGuid">{CF10ABFC-BBAA-434B-BDDE-25C9906DD320}</string>
 					<BinaryString name="AttributesSerialize"></BinaryString>
@@ -262613,15 +262657,15 @@ c2V0VmVyc2lvbgYAAAAAAAAUQA==]]></BinaryString>
 							<X>0</X>
 							<Y>0</Y>
 							<Z>0</Z>
-							<R00>0.990268052</R00>
-							<R01>-0.139173105</R01>
-							<R02>0</R02>
-							<R10>0.139173105</R10>
-							<R11>0.990268052</R11>
-							<R12>-0</R12>
-							<R20>0</R20>
+							<R00>-4.37113883e-08</R00>
+							<R01>0</R01>
+							<R02>1</R02>
+							<R10>0</R10>
+							<R11>1</R11>
+							<R12>0</R12>
+							<R20>-1</R20>
 							<R21>0</R21>
-							<R22>1</R22>
+							<R22>-4.37113883e-08</R22>
 						</CoordinateFrame>
 						<bool name="ManualActivationOnly">false</bool>
 						<bool name="RequiresHandle">true</bool>
@@ -262660,7 +262704,7 @@ c2V0VmVyc2lvbgYAAAAAAAAUQA==]]></BinaryString>
 						<SharedString name="SlimHash">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<OptionalCoordinateFrame name="WorldPivotData"></OptionalCoordinateFrame>
 						<BinaryString name="AttributesSerialize"><![CDATA[AgAAAAcAAABBc3NldElkAhAAAABUb29sLklyb25QaWNrYXhlDAAAAEFzc2V0VmVyc2lvbgYA
-AAAAAADwPw==]]></BinaryString>
+AAAAAAAAQA==]]></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
@@ -262827,9 +262871,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>0.0599994659</X>
-								<Y>2.2538166</Y>
-								<Z>-5.24531973e-09</Z>
+								<X>0.0749993324</X>
+								<Y>1.87065244</Y>
+								<Z>-9.70384129e-09</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -262846,7 +262890,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4285036937</Color3uint8>
+							<Color3uint8 name="Color3uint8">4284322237</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -262861,7 +262905,7 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="LeftSurfaceInput">0</token>
 							<bool name="Locked">false</bool>
 							<bool name="Massless">true</bool>
-							<token name="Material">1088</token>
+							<token name="Material">272</token>
 							<string name="MaterialVariantSerialized"></string>
 							<CoordinateFrame name="PivotOffset">
 								<X>0</X>
@@ -262899,9 +262943,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>3.57999992</X>
-								<Y>1.3823669</Y>
-								<Z>0.520000041</Z>
+								<X>4.4749999</X>
+								<Y>1.86619532</Y>
+								<Z>0.962000072</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -262999,9 +263043,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>0.0599994659</X>
-								<Y>2.18020821</Y>
-								<Z>-5.72729141e-06</Z>
+								<X>0.0749993324</X>
+								<Y>1.77128112</Y>
+								<Z>-1.05954887e-05</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -263018,7 +263062,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4290168786</Color3uint8>
+							<Color3uint8 name="Color3uint8">4292144383</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -263033,7 +263077,7 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="LeftSurfaceInput">0</token>
 							<bool name="Locked">false</bool>
 							<bool name="Massless">true</bool>
-							<token name="Material">1088</token>
+							<token name="Material">272</token>
 							<string name="MaterialVariantSerialized"></string>
 							<CoordinateFrame name="PivotOffset">
 								<X>0</X>
@@ -263071,9 +263115,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>3.57999992</X>
-								<Y>1.23958349</Y>
-								<Z>0.334513307</Z>
+								<X>4.4749999</X>
+								<Y>1.67343771</Y>
+								<Z>0.618849635</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -263171,9 +263215,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>0.0599994585</X>
-								<Y>1.97051692</Y>
-								<Z>-0.0899438933</Z>
+								<X>0.074999325</X>
+								<Y>1.4881978</Y>
+								<Z>-0.166396201</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -263190,7 +263234,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4281942862</Color3uint8>
+							<Color3uint8 name="Color3uint8">4281685880</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -263205,7 +263249,7 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="LeftSurfaceInput">0</token>
 							<bool name="Locked">false</bool>
 							<bool name="Massless">true</bool>
-							<token name="Material">1088</token>
+							<token name="Material">272</token>
 							<string name="MaterialVariantSerialized"></string>
 							<CoordinateFrame name="PivotOffset">
 								<X>0</X>
@@ -263243,9 +263287,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>3.57999992</X>
-								<Y>0.817313194</Y>
-								<Z>0.160111517</Z>
+								<X>4.4749999</X>
+								<Y>1.10337281</Y>
+								<Z>0.296206295</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -263343,9 +263387,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>0.0100574493</X>
-								<Y>-0.0399223566</Y>
-								<Z>-0.00026893703</Z>
+								<X>0.0145833017</X>
+								<Y>-0.0251254626</Y>
+								<Z>-0.000389958703</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -263362,7 +263406,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4291398200</Color3uint8>
+							<Color3uint8 name="Color3uint8">4294948675</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -263415,9 +263459,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>0.363812387</X>
-								<Y>1.32628679</Y>
-								<Z>0.325456619</Z>
+								<X>0.527527988</X>
+								<Y>1.27323532</Y>
+								<Z>0.471912086</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -263515,9 +263559,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>-0.0149993878</X>
-								<Y>1.08999991</Y>
-								<Z>0.016810419</Z>
+								<X>-0.0209991429</X>
+								<Y>0.909099936</Y>
+								<Z>0.0235345867</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -263534,7 +263578,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4286138925</Color3uint8>
+							<Color3uint8 name="Color3uint8">4289095993</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -263587,9 +263631,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>0.364468157</X>
-								<Y>4.01999998</Y>
-								<Z>0.267346084</Z>
+								<X>0.510255396</X>
+								<Y>3.65820003</Y>
+								<Z>0.374284506</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -263687,9 +263731,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>-0.0149993915</X>
-								<Y>1.08999991</Y>
-								<Z>-0.0168046933</Z>
+								<X>-0.0209991485</X>
+								<Y>0.909099936</Y>
+								<Z>-0.0235265698</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -263706,7 +263750,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4287979836</Color3uint8>
+							<Color3uint8 name="Color3uint8">4291070283</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -263759,9 +263803,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>0.364468157</X>
-								<Y>4.01999998</Y>
-								<Z>0.267357349</Z>
+								<X>0.510255396</X>
+								<Y>3.65820003</Y>
+								<Z>0.374300301</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -263859,9 +263903,9 @@ AAAAAADwPw==]]></BinaryString>
 							<token name="BottomSurface">0</token>
 							<token name="BottomSurfaceInput">0</token>
 							<CoordinateFrame name="CFrame">
-								<X>-0.0332050323</X>
-								<Y>1.08999991</Y>
-								<Z>-3.81179439e-06</Z>
+								<X>-0.0464870445</X>
+								<Y>0.909099936</Y>
+								<Z>-5.336512e-06</Z>
 								<R00>-1</R00>
 								<R01>0</R01>
 								<R02>-8.74227766e-08</R02>
@@ -263878,7 +263922,7 @@ AAAAAADwPw==]]></BinaryString>
 							<bool name="CastShadow">true</bool>
 							<string name="CollisionGroup">Default</string>
 							<int name="CollisionGroupId">0</int>
-							<Color3uint8 name="Color3uint8">4284168488</Color3uint8>
+							<Color3uint8 name="Color3uint8">4286599213</Color3uint8>
 							<PhysicalProperties name="CustomPhysicalProperties">
 								<CustomPhysics>false</CustomPhysics>
 							</PhysicalProperties>
@@ -263931,9 +263975,9 @@ AAAAAADwPw==]]></BinaryString>
 								<Z>0</Z>
 							</Vector3>
 							<Vector3 name="size">
-								<X>0.253651977</X>
-								<Y>4.01999998</Y>
-								<Z>0.30095911</Z>
+								<X>0.355112761</X>
+								<Y>3.65820003</Y>
+								<Z>0.42134276</Z>
 							</Vector3>
 							<BinaryString name="AttributesSerialize">AQAAAA0AAABCbGVuZGVyU291cmNlAhIAAABNaW5pbmdBc3NldHMuYmxlbmQ=</BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>

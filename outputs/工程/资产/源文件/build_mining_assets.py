@@ -31,9 +31,9 @@ def mat(name,hexcolor,metal=0,rough=.6):
     bs.inputs["Base Color"].default_value=(*c,1)
     bs.inputs["Metallic"].default_value=metal;bs.inputs["Roughness"].default_value=rough
     return m
-iron=[mat("Forged iron","687989",.65,.32),mat("Silver edge","B6C7D2",.7,.25),mat("Iron underside","39434E",.65,.4)]
-wood=[mat("Walnut","794A2D"),mat("Wood light","95613C"),mat("Wood dark","5B3928")]
-leather=[mat("Ochre leather","C98A38",0,.7),mat("Leather edge","AA6C2B",0,.75)]
+iron=[mat("Forged iron","5D91BD",.25,.38),mat("Silver edge","D4ECFF",.3,.3),mat("Iron underside","355778",.25,.4)]
+wood=[mat("Walnut","A66939"),mat("Wood light","C4894B"),mat("Wood dark","80502D")]
+leather=[mat("Ochre leather","FFB743",0,.7),mat("Leather edge","D98B2E",0,.75)]
 rockm=[mat("Sandstone "+str(i),c)for i,c in enumerate(["C9946D","DCA77C","B88565","E7B68B","A97B60"])]
 copper=[mat("Copper","C67943",.45,.47),mat("Copper edge","E8A15E",.5,.38),mat("Mineral seam","78553E")]
 
@@ -159,6 +159,15 @@ iron_obj=combined_mesh(pick,"Iron",lambda o:o.name.startswith(("Iron","Head","To
 wood_obj=combined_mesh(pick,"Wood",lambda o:o.name.startswith("Walnut"))
 leather_obj=combined_mesh(pick,"Leather",lambda o:o.name.startswith("Leather"))
 seams=combined_mesh(stone,"Inclusions",lambda o:o.name.startswith(("CopperInclusion","InsetSeam")))
+
+# Chunky cartoon proportions. Match the native MeshPart sizing recipe in NativeMeshRegistry.
+for obj in pick.objects:
+    for vertex in obj.data.vertices:
+        x,y,z=vertex.co
+        if obj.name=="Iron":vertex.co=(x*1.25,y*1.85,(z-3.44)*1.35+3.15)
+        elif obj.name=="Wood":vertex.co=(x*1.4,y*1.4,z*.91)
+        else:vertex.co=(x*1.45,y*1.45,z*.96+.05)
+    obj.data.update()
 
 bundle={}
 def export_data(coll,offset):

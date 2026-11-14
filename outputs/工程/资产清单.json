@@ -89,6 +89,26 @@
       "R6 完整流程",
       "多客户端",
       "真实手机"
-    ]
+    ],
+    "cartoonUpdate": {
+      "assetVersion": 2,
+      "headScale": [
+        1.25,
+        1.35,
+        1.85
+      ],
+      "shaftScale": [
+        1.4,
+        0.91,
+        1.4
+      ],
+      "grip": "Y rotation 90 degrees",
+      "idle": "右肩扛镐",
+      "automaticSpeed": 1.5,
+      "trainingInterval": 0.5333333333333333,
+      "measuredInterval": 0.53654,
+      "timingConfig": "ReplicatedStorage.Shared.MiningStyle",
+      "preview": "资产/导出/右肩扛镐实景.png"
+    }
   }
 }

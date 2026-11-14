@@ -143,7 +143,7 @@ end
 wire.Feedback.OnClientEvent:Connect(function(mode,a,b,c)
     if mode=="note"then announce(a)
     elseif mode=="sale"then announce("已售出 "..b.." 块矿石  +"..a.." 金币")
-    elseif mode=="train" or mode=="practice" then feedbackEffects:Stroke(a,b)
+    elseif mode=="train" or mode=="practice" then feedbackEffects:Stroke(a,b,c)
     elseif mode=="hit"then
         feedbackEffects:Stroke(a,1)
         targetText:SetAttribute("Busy",true);targetText.Text="剩余耐久 "..b.."/"..c

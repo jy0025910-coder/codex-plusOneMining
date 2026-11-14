@@ -1,5 +1,6 @@
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
+local Style = require(script.Parent.MiningStyle)
 local Feedback = {}
 Feedback.__index = Feedback
 
@@ -111,8 +112,8 @@ function Feedback:Impact(target)
     Debris:AddItem(sound, 1.2)
 end
 
-function Feedback:Stroke(target, amount)
-    task.delay(.27, function()
+function Feedback:Stroke(target, amount, speed)
+    task.delay(Style.ImpactTime / (speed or 1), function()
         self:Impact(target)
         if amount and amount > 0 then self:Power(amount) end
     end)

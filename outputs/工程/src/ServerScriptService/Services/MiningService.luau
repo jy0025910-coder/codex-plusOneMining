@@ -6,6 +6,7 @@ local Config = require(game.ReplicatedStorage.Shared.PrototypeConfig)
 local Catalog = require(game.ReplicatedStorage.Shared.OreCatalog)
 local Equipment = require(script.Parent.MiningAssets)
 local Motion = require(script.Parent.MiningMotion)
+local Style = require(game.ReplicatedStorage.Shared.MiningStyle)
 local wire = game.ReplicatedStorage.DigCamp
 local Service = {}
 local states = {}
@@ -146,11 +147,11 @@ local function stepTraining(dt)
         if gain>0 then
             state.training+=dt
             if state.training>=Config.TrainingInterval then
-                state.training=0
+                state.training-=Config.TrainingInterval
                 state.power+=gain
                 player:SetAttribute("Power",state.power)
-                Motion.Play(player,rock)
-                wire.Feedback:FireClient(player,"train",rock,gain)
+                Motion.Play(player,rock,Style.AutoSwingSpeed)
+                wire.Feedback:FireClient(player,"train",rock,gain,Style.AutoSwingSpeed)
             end
         else
             state.training=0
@@ -224,7 +225,7 @@ function Service.Start()
     local accumulator,boards=0,0
     RunService.Heartbeat:Connect(function(dt)
         accumulator+=dt;boards+=dt
-        if accumulator>=.15 then local elapsed=accumulator;accumulator=0;stepTraining(elapsed)end
+        if accumulator>=.05 then local elapsed=accumulator;accumulator=0;stepTraining(elapsed)end
         if boards>=2 then boards=0;updateBoards()end
     end)
 end

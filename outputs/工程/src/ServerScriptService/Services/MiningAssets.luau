@@ -1,4 +1,5 @@
 local assets = game:GetService("ServerStorage"):WaitForChild("GameAssets")
+local Style = require(game.ReplicatedStorage.Shared.MiningStyle)
 local Factory = {}
 
 function Factory.GetEquipped(character)
@@ -17,6 +18,7 @@ function Factory.Equip(player, character, humanoid, backpack)
     if current then return current end
     local tool = assets.Tools.IronPickaxe:Clone()
     tool.Name = "铁镐"
+    tool.Grip = Style.Grip
     for _, part in tool:GetDescendants() do
         if part:IsA("BasePart") then
             part.Anchored = false
