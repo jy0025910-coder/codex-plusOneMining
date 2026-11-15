@@ -1,0 +1,52 @@
+{
+  "checks": {
+    "town_children_except_rim_unchanged": true,
+    "lighting_unchanged": true,
+    "only_environment_script_changed": true,
+    "environment_source_matches": true,
+    "no_staging_model": true,
+    "visual_count_78": true,
+    "zero_rim_scripts": true,
+    "preview_archived": true
+  },
+  "changed_scripts": [
+    "/ServerScriptService/Services/CampEnvironment"
+  ],
+  "place_sha256": "97dcaf5300a272e23d1a94030d32ce5f5fc380ed1deb7fa2f4d32d6cbc725457",
+  "checkpoint": "7bd5c82",
+  "visual_instances": 78,
+  "colliders": 34,
+  "templates": {
+    "A": {
+      "mesh": 112904994536981,
+      "texture": 80241492425048
+    },
+    "B": {
+      "mesh": 135907110245641,
+      "texture": 124207543160591
+    },
+    "Corner": {
+      "mesh": 114785705213439,
+      "texture": 113511616860746
+    }
+  },
+  "play_evidence": {
+    "mode": "Solo, one client",
+    "unique_content_preload": "6/6 Success in Edit and Client",
+    "auto_training_gain": 1,
+    "training_stops_after_leaving": true,
+    "gate1_hp": [
+      100,
+      0
+    ],
+    "deepest_layer": 1,
+    "walk_into_first_room_z": -93.22147,
+    "left_boundary_stopped_x": -90.0291
+  },
+  "not_tested": [
+    "Complete 5-ore sell-upgrade loop",
+    "Multiplayer",
+    "Mobile",
+    "Performance benchmark"
+  ]
+}
