@@ -6,6 +6,8 @@ Theme.Colors = {
     Amber=Color3.fromRGB(255,188,34), Orange=Color3.fromRGB(241,138,16),
     Cream=Color3.fromRGB(255,244,209), Purple=Color3.fromRGB(146,107,225),
     White=Color3.fromRGB(255,255,255), Steel=Color3.fromRGB(92,125,153),
+    MenuBlue=Color3.fromRGB(111,207,234), MenuGold=Color3.fromRGB(255,201,65),
+    MenuPurple=Color3.fromRGB(178,147,232), Money=Color3.fromRGB(111,245,78),
 }
 Theme.Icons = {
     Pickaxe="rbxassetid://140555305371223",
@@ -16,10 +18,10 @@ Theme.Icons = {
     Friends="rbxassetid://99576971828611",
 }
 Theme.Menus = {
-    {Id="Shop",Label="商店",Color="Amber"}, {Id="Wheel",Label="幸运轮",Color="Teal"},
-    {Id="Pickaxe",Label="铁镐",Color="Teal"}, {Id="Upgrade",Label="强化",Color="Teal"},
-    {Id="Rebirth",Label="重生",Color="Purple"}, {Id="Collection",Label="图鉴",Color="Teal"},
-    {Id="Idle",Label="挂机",Color="Teal"}, {Id="Friends",Label="好友",Color="Teal"},
+    {Id="Shop",Label="商店",Color="MenuGold"}, {Id="Wheel",Label="幸运轮",Color="MenuBlue"},
+    {Id="Pickaxe",Label="铁镐",Color="MenuBlue"}, {Id="Upgrade",Label="强化",Color="MenuBlue"},
+    {Id="Rebirth",Label="重生",Color="MenuPurple"}, {Id="Collection",Label="图鉴",Color="MenuBlue"},
+    {Id="Idle",Label="挂机",Color="MenuBlue"}, {Id="Friends",Label="好友",Color="MenuBlue"},
 }
 -- Visual placeholders only. No product IDs or MarketplaceService calls in this slice.
 Theme.Preview = {Level=4, XP=58, NextXP=68, DoublePrice=9}

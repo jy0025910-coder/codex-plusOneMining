@@ -1,0 +1,135 @@
+{
+  "date": "2026-11-16",
+  "studioId": "7499e274-5283-4647-8b11-2d72b84b683d",
+  "placeId": 95023028297106,
+  "saveStatus": "NotNeeded; preceding save completed and Studio has no unsaved changes",
+  "desktopViewport": [
+    2352,
+    909
+  ],
+  "desktopSafeRoot": [
+    2352,
+    851
+  ],
+  "layoutCases": {
+    "1": {
+      "state": "closed",
+      "outside": [],
+      "clipped": [],
+      "size": "1600, 900"
+    },
+    "2": {
+      "state": "menu",
+      "outside": [],
+      "clipped": [],
+      "size": "1600, 900"
+    },
+    "3": {
+      "state": "offers",
+      "outside": [],
+      "clipped": [],
+      "size": "1600, 900"
+    },
+    "4": {
+      "state": "closed",
+      "outside": [],
+      "clipped": [],
+      "size": "1280, 720"
+    },
+    "5": {
+      "state": "menu",
+      "outside": [],
+      "clipped": [],
+      "size": "1280, 720"
+    },
+    "6": {
+      "state": "offers",
+      "outside": [],
+      "clipped": [],
+      "size": "1280, 720"
+    },
+    "7": {
+      "state": "closed",
+      "outside": [],
+      "clipped": [],
+      "size": "1024, 600"
+    },
+    "8": {
+      "state": "menu",
+      "outside": [],
+      "clipped": [],
+      "size": "1024, 600"
+    },
+    "9": {
+      "state": "offers",
+      "outside": [],
+      "clipped": [],
+      "size": "1024, 600"
+    },
+    "10": {
+      "state": "closed",
+      "outside": [],
+      "clipped": [],
+      "size": "844, 390"
+    },
+    "11": {
+      "state": "menu",
+      "outside": [],
+      "clipped": [],
+      "size": "844, 390"
+    },
+    "12": {
+      "state": "offers",
+      "outside": [],
+      "clipped": [],
+      "size": "844, 390"
+    },
+    "13": {
+      "state": "closed",
+      "outside": [],
+      "clipped": [],
+      "size": "390, 780"
+    },
+    "14": {
+      "state": "menu",
+      "outside": [],
+      "clipped": [],
+      "size": "390, 780"
+    },
+    "15": {
+      "state": "offers",
+      "outside": [],
+      "clipped": [],
+      "size": "390, 780"
+    }
+  },
+  "checks": {
+    "flatButtonsNoGradient": true,
+    "hoverScale": 1,
+    "resourceContainerTransparent": true,
+    "offerContainerTransparent": true,
+    "currencyFont": "FredokaOne",
+    "currencyColorRGB": [
+      111,
+      245,
+      78
+    ],
+    "currencyTextSize": 42,
+    "sampleCoins": 16882,
+    "sampleOre": 3,
+    "sampleAttributesRestored": true,
+    "newImageUploads": 0,
+    "nativeBinaryRoundtripDescendants": 275,
+    "xmlCompanionRoundtripPropertyDifferences": 0
+  },
+  "outputNotes": [
+    "Existing asset 203785492 type mismatch",
+    "Three existing rbxassethash permission warnings",
+    "No new Luau errors observed"
+  ],
+  "limits": [
+    "Engine layout checks on temporary canvases; not real mobile hardware",
+    "No new multiplayer, gamepad or performance test",
+    "Existing gameplay and purchases not changed or retested in this cosmetic revision"
+  ]
+}

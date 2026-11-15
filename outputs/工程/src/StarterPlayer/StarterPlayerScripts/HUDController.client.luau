@@ -61,20 +61,22 @@ connect(root.TopRow.MultiplierOffer.Activated,function()preview("双倍力量展
 local tweens={}
 for _,button in root:GetDescendants()do
     if button:IsA("TextButton")then
-        local scale=button:FindFirstChild("InteractionScale")
-        local function animate(value)
+        local base=button.BackgroundColor3
+        local function animate(amount)
             if tweens[button]then tweens[button]:Cancel()end
-            if GuiService.ReducedMotionEnabled then scale.Scale=1;return end
-            local tween=TweenService:Create(scale,TweenInfo.new(.1),{Scale=value})
+            if button.BackgroundTransparency==1 then return end
+            local color=amount>=0 and base:Lerp(Color3.new(1,1,1),amount)or base:Lerp(Theme.Colors.Ink,-amount)
+            if GuiService.ReducedMotionEnabled then button.BackgroundColor3=color;return end
+            local tween=TweenService:Create(button,TweenInfo.new(.1),{BackgroundColor3=color})
             tweens[button]=tween;tween:Play()
         end
-        connect(button.MouseEnter,function()animate(1.025)end)
-        connect(button.MouseLeave,function()animate(1)end)
+        connect(button.MouseEnter,function()animate(.1)end)
+        connect(button.MouseLeave,function()animate(0)end)
         connect(button.InputBegan,function(input)
-            if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then animate(.97)end
+            if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then animate(-.12)end
         end)
         connect(button.InputEnded,function(input)
-            if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then animate(1)end
+            if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then animate(0)end
         end)
     end
 end

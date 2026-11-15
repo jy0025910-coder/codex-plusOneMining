@@ -48,11 +48,11 @@ function Layout.Apply(root, size, menuOpen, offersOpen)
     toggle.Visible=not full
     toggle.Position=UDim2.fromOffset(14,94)
     grid.Visible=full or menuOpen
-    grid.BackgroundTransparency=full and 1 or .05
+    grid.BackgroundTransparency=1
     local cols,cellW,cellH,gap
     if full then
-        cols,cellW,cellH,gap=2,82,88,8
-        grid.Position=UDim2.fromOffset(16,math.max(112,math.min(h*.18,h-566)))
+        cols,cellW,cellH,gap=2,82,h<740 and 78 or 88,8
+        grid.Position=UDim2.fromOffset(16,math.max(100,math.min(h*.15,h-(cellH*4+24)-212)))
     elseif w>=700 then
         cols,cellW,cellH,gap=4,62,68,7
         grid.Position=UDim2.fromOffset(14,194)
@@ -76,15 +76,15 @@ function Layout.Apply(root, size, menuOpen, offersOpen)
     if full then
         resources.AnchorPoint=Vector2.new(0,1)
         resources.Position=UDim2.new(0,16,1,-20)
-        resources.Size=UDim2.fromOffset(226,154)
+        resources.Size=UDim2.fromOffset(282,168)
         resources.List.FillDirection=Enum.FillDirection.Vertical
         resources.List.Padding=UDim.new(0,6)
         for _,row in resources:GetChildren()do if row:IsA("Frame")then
-            row.Size=UDim2.fromOffset(226,46)
-            row.Icon.Size=UDim2.fromOffset(54,54)
-            row.Label.Visible=true;row.Label.TextSize=17
-            row.Value.Position=UDim2.fromOffset(105,0)
-            row.Value.Size=UDim2.new(1,-113,1,0);row.Value.TextSize=27
+            row.Size=UDim2.fromOffset(282,52)
+            row.Icon.Size=UDim2.fromOffset(62,62)
+            row.Label.Visible=false
+            row.Value.Position=UDim2.fromOffset(62,0)
+            row.Value.Size=UDim2.new(1,-68,1,0);row.Value.TextSize=42
         end end
     else
         local total=math.min(w-28,500)
@@ -99,7 +99,7 @@ function Layout.Apply(root, size, menuOpen, offersOpen)
             row.Icon.Size=UDim2.fromOffset(38,38)
             row.Label.Visible=false
             row.Value.Position=UDim2.fromOffset(34,0)
-            row.Value.Size=UDim2.new(1,-39,1,0);row.Value.TextSize=w<540 and 19 or 23
+            row.Value.Size=UDim2.new(1,-39,1,0);row.Value.TextSize=w<540 and 23 or 28
         end end
         toggle.Position=UDim2.fromOffset(14,124)
     end
@@ -107,25 +107,26 @@ function Layout.Apply(root, size, menuOpen, offersOpen)
     root.OffersToggle.Visible=not full
     root.OffersToggle.Position=UDim2.new(1,-14,0,124)
     offers.Visible=full or offersOpen
-    local ow=full and 218 or 178
-    local oh=full and 91 or 69
+    local ow=full and 178 or 160
+    local oh=full and 132 or 120
     offers.Size=UDim2.fromOffset(ow,oh*3+20)
-    offers.Position=full and UDim2.new(1,-16,.46,0)or UDim2.new(1,-14,0,194)
+    offers.Position=full and UDim2.new(1,-16,.5,0)or UDim2.new(1,-14,0,194)
     offers.AnchorPoint=Vector2.new(1,full and .5 or 0)
     offers.List.FillDirection=Enum.FillDirection.Vertical
     if not full and w>=700 and h<460 then
-        local total=math.min(w-28,554)
+        local total=math.min(w-28,500)
         ow=math.floor((total-20)/3)
+        oh=math.min(106,h-214)
         offers.Size=UDim2.fromOffset(total,oh)
         offers.List.FillDirection=Enum.FillDirection.Horizontal
     elseif not full then
-        oh=math.clamp(math.floor((h-238)/3),48,69)
+        oh=math.clamp(math.floor((h-238)/3),78,120)
         offers.Size=UDim2.fromOffset(ow,oh*3+20)
     end
     for _,tile in offers:GetChildren()do if tile:IsA("TextButton")then
         tile.Size=UDim2.fromOffset(ow,oh)
-        tile.Label.TextSize=full and 24 or 19
-        tile.Price.TextSize=full and 22 or 19
+        tile.Label.TextSize=full and 38 or 32
+        tile.Price.TextSize=full and 24 or 21
     end end
     root.Status.Guide.Size=UDim2.fromOffset(math.min(600,w-48),26)
     root.Status.Guide.Visible=full

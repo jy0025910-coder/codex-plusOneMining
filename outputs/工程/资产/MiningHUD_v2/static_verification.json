@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "Workspace_unchanged": true,
+    "Lighting_unchanged": true,
+    "ServerStorage_unchanged": true,
+    "ServerScriptService_unchanged": true,
+    "PowerGainTemplate_unchanged": true,
+    "MiningFeedback_unchanged": true,
+    "MiningAnimator_unchanged": true,
+    "PrototypeConfig_unchanged": true,
+    "one_hud": true,
+    "native_gui_matches_export": true,
+    "separate_icon_labels": true,
+    "authored_menu_buttons": true,
+    "source_matches_HUDTheme": true,
+    "source_matches_HUDLayout": true,
+    "source_matches_HUDDecor": true,
+    "source_matches_HUDController": true,
+    "no_purchase_calls": true,
+    "source_matches_DigController": true,
+    "flat_menu_tiles": true,
+    "transparent_resource_rows": true,
+    "three_reward_glows": true,
+    "twelve_fading_rays": true,
+    "mining_controller_unchanged": true
+  },
+  "scope": "HUD v2 flat buttons, native fading reward rays, shaded resources; gameplay unchanged"
+}
