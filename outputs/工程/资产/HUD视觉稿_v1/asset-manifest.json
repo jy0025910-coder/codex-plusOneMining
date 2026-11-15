@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "art_direction_brief": "Source/design-brief.md",
+  "assets": [
+    {
+      "path": "Renders/MiningHUD_IconDirections_v1.png",
+      "status": "draft-awaiting-user-review",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1704868,
+      "sha256": "495b4cabe3cefc6ac3f149687e23c031dd6fa02de933fe1f4d7b48456773ea49",
+      "source": {
+        "kind": "generated",
+        "tool": "built-in image_gen",
+        "created_at": "2026-11-15",
+        "reference": "Project-approved cartoon pickaxe B; layout also uses project gameplay screenshot"
+      },
+      "verification": {
+        "visually_reviewed": true,
+        "in_engine_reviewed": false,
+        "approved_by": null
+      }
+    },
+    {
+      "path": "Renders/MiningHUD_Layout_v1.png",
+      "status": "draft-awaiting-user-review",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2035963,
+      "sha256": "de685c1d48d60e65c8b0820d7510e0a0eee7d4bcbccd14d248fc676e1b8b5989",
+      "source": {
+        "kind": "generated",
+        "tool": "built-in image_gen",
+        "created_at": "2026-11-15",
+        "reference": "Project-approved cartoon pickaxe B; layout also uses project gameplay screenshot"
+      },
+      "verification": {
+        "visually_reviewed": true,
+        "in_engine_reviewed": false,
+        "approved_by": null
+      }
+    }
+  ],
+  "planned_icons": [
+    {
+      "id": "Backpack",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "CurrencyA",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "CurrencyB",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Rebirth",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Shop",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "LuckyWheel",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Pickaxe",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Upgrade",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Collection",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Idle",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "Friends",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    },
+    {
+      "id": "DoublePower",
+      "status": "concept-only",
+      "production_png": null,
+      "roblox_asset_id": null
+    }
+  ],
+  "game_changes": false,
+  "purchases_enabled": false
+}

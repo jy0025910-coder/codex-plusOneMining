@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-15",
+  "placeId": 95023028297106,
+  "savedCloudVersion": 9,
+  "modes": [
+    "Studio solo Test Client",
+    "Server attribute updates for display verification"
+  ],
+  "actualViewports": [
+    {
+      "viewport": [
+        2352,
+        909
+      ],
+      "safeRoot": [
+        2352,
+        851
+      ],
+      "mode": "Full"
+    },
+    {
+      "viewport": [
+        1072,
+        431
+      ],
+      "safeRoot": [
+        1072,
+        373
+      ],
+      "mode": "Compact"
+    }
+  ],
+  "engineLayoutCanvasChecks": {
+    "1": {
+      "state": "closed",
+      "outside": [],
+      "clippedText": [],
+      "size": "1600, 900"
+    },
+    "2": {
+      "state": "menu",
+      "outside": [],
+      "clippedText": [],
+      "size": "1600, 900"
+    },
+    "3": {
+      "state": "offers",
+      "outside": [],
+      "clippedText": [],
+      "size": "1600, 900"
+    },
+    "4": {
+      "state": "closed",
+      "outside": [],
+      "clippedText": [],
+      "size": "1280, 720"
+    },
+    "5": {
+      "state": "menu",
+      "outside": [],
+      "clippedText": [],
+      "size": "1280, 720"
+    },
+    "6": {
+      "state": "offers",
+      "outside": [],
+      "clippedText": [],
+      "size": "1280, 720"
+    },
+    "7": {
+      "state": "closed",
+      "outside": [],
+      "clippedText": [],
+      "size": "1024, 600"
+    },
+    "8": {
+      "state": "menu",
+      "outside": [],
+      "clippedText": [],
+      "size": "1024, 600"
+    },
+    "9": {
+      "state": "offers",
+      "outside": [],
+      "clippedText": [],
+      "size": "1024, 600"
+    },
+    "10": {
+      "state": "closed",
+      "outside": [],
+      "clippedText": [],
+      "size": "844, 390"
+    },
+    "11": {
+      "state": "menu",
+      "outside": [],
+      "clippedText": [],
+      "size": "844, 390"
+    },
+    "12": {
+      "state": "offers",
+      "outside": [],
+      "clippedText": [],
+      "size": "844, 390"
+    },
+    "13": {
+      "state": "closed",
+      "outside": [],
+      "clippedText": [],
+      "size": "390, 780"
+    },
+    "14": {
+      "state": "menu",
+      "outside": [],
+      "clippedText": [],
+      "size": "390, 780"
+    },
+    "15": {
+      "state": "offers",
+      "outside": [],
+      "clippedText": [],
+      "size": "390, 780"
+    }
+  },
+  "engineLayoutChecksAreDeviceSimulation": false,
+  "executed": {
+    "visibleIconsReviewed": true,
+    "menuClickStrengthDelta": 0,
+    "worldClickStrengthDelta": 1,
+    "postRespawnHudCount": 1,
+    "postRespawnWorldClickStrengthDelta": 1,
+    "popupsCleaned": true,
+    "resourceBagSample": "2 / 5",
+    "resourceCoinSample": "1,280",
+    "temporaryAttributeSamplesRestored": true,
+    "compactMenuOpen": true,
+    "compactOffersOpenClosesMenu": true,
+    "crossToggleLabelsFixedAndRetested": true,
+    "editTemplateHiddenRuntimeEnabled": true
+  },
+  "notTested": [
+    "Real mobile touch controls",
+    "Console/gamepad navigation",
+    "Multiplayer",
+    "Performance benchmark",
+    "Purchases (intentionally absent)"
+  ],
+  "outputObserved": [
+    "203785492 asset type mismatch (pre-existing)",
+    "3 rbxassethash permission warnings observed; all visible HUD image IDs subsequently rendered successfully"
+  ],
+  "luaRuntimeErrorsObserved": false
+}

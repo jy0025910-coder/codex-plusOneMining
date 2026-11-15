@@ -5,7 +5,6 @@ local Run=game:GetService("RunService")
 local p=Players.LocalPlayer
 local wire=game.ReplicatedStorage:WaitForChild("DigCamp")
 local cfg=require(game.ReplicatedStorage.Shared.PrototypeConfig)
-local catalog=require(game.ReplicatedStorage.Shared.OreCatalog)
 local camp=workspace:WaitForChild("Gem Gulch")
 local gui=p:WaitForChild("PlayerGui"):WaitForChild("FieldKit")
 gui:ClearAllChildren()
@@ -13,56 +12,15 @@ gui.ResetOnSpawn=false
 local FeedbackEffects = require(game.ReplicatedStorage.Shared.MiningFeedback)
 local feedbackEffects = FeedbackEffects.new(gui,p)
 local GuiService = game:GetService("GuiService")
-local function text(name,parent,size,pos,fontSize)
-    local t=Instance.new("TextLabel")
-    t.Name=name;t.Size=size;t.Position=pos
-    t.BackgroundTransparency=1;t.TextColor3=Color3.fromRGB(255,241,210)
-    t.Font=Enum.Font.GothamBold;t.TextSize=fontSize or 20
-    t.TextXAlignment=Enum.TextXAlignment.Left
-    t.Parent=parent
-    return t
-end
-local panel=Instance.new("Frame")
-panel.Name="MiningHUD";panel.Position=UDim2.fromOffset(16,16);panel.Size=UDim2.fromOffset(320,159)
-panel.BackgroundColor3=Color3.fromRGB(31,60,65);panel.BackgroundTransparency=.08;panel.BorderSizePixel=0;panel.Parent=gui
-local corner=Instance.new("UICorner");corner.CornerRadius=UDim.new(0,12);corner.Parent=panel
-local scale=Instance.new("UIScale");scale.Parent=panel
-local title=text("Title",panel,UDim2.fromOffset(290,26),UDim2.fromOffset(15,10),14);title.Text="晶脉峡谷  /  矿工休息站"
-local power=text("Power",panel,UDim2.fromOffset(290,31),UDim2.fromOffset(15,41),24)
-local bag=text("Bag",panel,UDim2.fromOffset(290,27),UDim2.fromOffset(15,76),18)
-local depth=text("Depth",panel,UDim2.fromOffset(290,24),UDim2.fromOffset(15,107),16)
-local slots=text("Slots",gui,UDim2.fromOffset(650,34),UDim2.fromOffset(18,183),14)
-slots.TextStrokeTransparency=.35;slots.TextStrokeColor3=Color3.fromRGB(25,45,47)
-local guide=text("Guide",gui,UDim2.fromOffset(660,56),UDim2.new(.5,-330,1,-81),17)
-guide.TextXAlignment=Enum.TextXAlignment.Center;guide.TextStrokeTransparency=.25
-guide.BackgroundColor3=Color3.fromRGB(31,60,65);guide.BackgroundTransparency=.08
-local c=Instance.new("UICorner");c.CornerRadius=UDim.new(0,10);c.Parent=guide
-local toast=text("Toast",gui,UDim2.fromOffset(620,44),UDim2.new(.5,-310,.18,0),22)
-toast.TextXAlignment=Enum.TextXAlignment.Center;toast.TextStrokeTransparency=.25;toast.Text=""
-local targetText=text("Target",gui,UDim2.fromOffset(600,36),UDim2.new(.5,-300,.73,0),21)
-targetText.TextXAlignment=Enum.TextXAlignment.Center;targetText.TextStrokeTransparency=.2;targetText.Text=""
-local returnButton=Instance.new("TextButton")
-returnButton.Name="ReturnToCamp";returnButton.Size=UDim2.fromOffset(138,42);returnButton.Position=UDim2.new(1,-155,0,18)
-returnButton.Text="返回休息站";returnButton.Font=Enum.Font.GothamBold;returnButton.TextSize=17;returnButton.BackgroundColor3=Color3.fromRGB(47,103,111);returnButton.TextColor3=Color3.fromRGB(255,239,203);returnButton.Parent=gui
-local buttonCorner=Instance.new("UICorner");buttonCorner.CornerRadius=UDim.new(0,10);buttonCorner.Parent=returnButton
-returnButton.Activated:Connect(function()wire.ReturnToCamp:FireServer()end)
-local inv=p:WaitForChild("OreInventory")
+local hud=p:WaitForChild("PlayerGui"):WaitForChild("MiningHUD"):WaitForChild("Root")
+local guide=hud.Status.Guide
+local toast=hud.Status.Toast
+local targetText=hud.Status.Target
+hud.ReturnToCamp.Activated:Connect(function()wire.ReturnToCamp:FireServer()end)
 local function refresh()
-    local value=p:GetAttribute("Power")or 1
     local training=p:GetAttribute("TrainingGain")or 0
-    local coins=p:GetAttribute("Coins")or 0
     local count=p:GetAttribute("Ore")or 0
     local mining=p:GetAttribute("AutoMining")==true
-    power.Text="力量 "..value..(training>0 and ("  ·  自动训练 +"..training) or mining and "  ·  自动采矿" or "")
-    bag.Text="背包 "..count.."/5     金币 "..coins
-    depth.Text="已打通 "..(p:GetAttribute("DeepestLayer")or 0).."/"..#cfg.Layers.." 层"
-    local names={}
-    for i=1,5 do
-        local item=inv:FindFirstChild("Slot"..i)
-        local ore=item and catalog.Items[item.Value]
-        table.insert(names,ore and (ore.Name.." "..ore.Value.."金")or "空格")
-    end
-    slots.Text=table.concat(names,"  |  ")
     guide.Text=count>=5 and "背包满了 · 返回摊位，走进绿色光幕出售" or training>0 and "正在自动敲矿训练 · 离开光幕即可停止" or mining and "正在自动采矿 · 走开即可停止" or "点击 +1 力量  ·  走进左侧练习区自动敲击  ·  靠近矿门自动挖掘"
     for i=1,#cfg.Layers do
         local layer=camp.Mine:FindFirstChild("Layer"..i)
@@ -80,17 +38,7 @@ local function refresh()
 end
 for _,key in {"Power","TrainingGain","AutoMining","Coins","Ore","DeepestLayer"}do p:GetAttributeChangedSignal(key):Connect(refresh)end
 for i=1,#cfg.Layers do p:GetAttributeChangedSignal("Gate"..i.."HP"):Connect(refresh)end
-for i=1,5 do inv:WaitForChild("Slot"..i).Changed:Connect(refresh)end
-local function resize()
-    local vp=workspace.CurrentCamera.ViewportSize
-    local s=math.clamp(vp.X/1000,.65,1)
-    scale.Scale=s
-    slots.Position=UDim2.fromOffset(18,20+159*s)
-    slots.Size=UDim2.fromOffset(math.min(650,vp.X-36),42);slots.TextWrapped=true
-    guide.Size=UDim2.fromOffset(math.min(660,vp.X-24),56);guide.Position=UDim2.new(.5,-math.min(660,vp.X-24)/2,1,-81);guide.TextSize=vp.X<700 and 13 or 17
-end
-workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(resize)
-resize();refresh()
+refresh()
 local mouse=p:GetMouse()
 local hovered
 local function findTarget(part)

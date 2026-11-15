@@ -1,0 +1,262 @@
+{
+  "date": "2026-11-15",
+  "ownerUserId": "11832238976",
+  "reference": "../HUD视觉稿_v1/Renders/MiningHUD_IconDirections_v1.png",
+  "assets": [
+    {
+      "id": "Backpack",
+      "operation": "9f46025d-aa11-40c5-8cfc-48de8592ed0f",
+      "decalId": "73269337551595",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "102271797036965",
+      "path": "Icons/Backpack.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          19,
+          89,
+          1226,
+          1208
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "4ff25c71ab3cf8696e6d4d2ceef24dd4d66cacf3f699a6cf6683fb08e1d0085b"
+      }
+    },
+    {
+      "id": "Currency",
+      "operation": "4be0f534-15d5-45eb-8dec-3bfab7cc0a27",
+      "decalId": "131222863860618",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "105302444263341",
+      "path": "Icons/Currency.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          67,
+          1224,
+          1230
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "4ecbbb9307a3234b305ddf651e7722049025c3913471fc4f7b9b92fa89929029"
+      }
+    },
+    {
+      "id": "Rebirth",
+      "operation": "6677951b-7d7d-463f-90d9-dc93e530ce78",
+      "decalId": "77522174311802",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "92301858592436",
+      "path": "Icons/Rebirth.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          33,
+          1236,
+          1210
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "cf9898df6d44f7304b5f6bca6ca3a536a8db20048f742f9a988c5660feb3532f"
+      }
+    },
+    {
+      "id": "Shop",
+      "operation": "a790935d-6ab8-4bd2-aeb6-0359ea94aa09",
+      "decalId": "124703652767101",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "137695969149889",
+      "path": "Icons/Shop.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          55,
+          1178,
+          1230
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "738cdb941304046a0f949475af70dbc235c26415662b1ee2f7634dc11e3e3092"
+      }
+    },
+    {
+      "id": "Wheel",
+      "operation": "1bb87114-56b4-4e60-90b7-341a31e7bf4e",
+      "decalId": "92115222933263",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "126494586189170",
+      "path": "Icons/Wheel.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          21,
+          1230,
+          1254
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "2e66620a39492b3c452286100bff785b0748be34ebd54d77fc11d58d5a2a31bd"
+      }
+    },
+    {
+      "id": "Upgrade",
+      "operation": "5966b8e0-9204-47bf-85d6-d7c392cc6d56",
+      "decalId": "83407363610133",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "124675921997614",
+      "path": "Icons/Upgrade.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          71,
+          1198,
+          1238
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "da96d6d638fc62230198c15ee8d21ef9bb77bd1185820f91f86d3e96a5d3d709"
+      }
+    },
+    {
+      "id": "Collection",
+      "operation": "9bfe8255-1b72-4191-9c4e-e15bde27489c",
+      "decalId": "111053583844972",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "112658581546029",
+      "path": "Icons/Collection.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          125,
+          1214,
+          1230
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "2a6739e1c4f1785d688c65c167acbe71db6bd63a5059a78c9e7a056323ac7a8e"
+      }
+    },
+    {
+      "id": "Idle",
+      "operation": "3341ffbb-d088-4193-9e59-333dbfe6dd39",
+      "decalId": "133847451260877",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "129176837191977",
+      "path": "Icons/Idle.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          43,
+          39,
+          1212,
+          1208
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "0e3924cf06a0f9922c20a1cec9e74625fb52dedac6d8cfe197ab40a403a4dce5"
+      }
+    },
+    {
+      "id": "Friends",
+      "operation": "083e0149-7dee-46fa-9610-3315d5d0a323",
+      "decalId": "78855283603490",
+      "moderation": "Approved",
+      "done": true,
+      "imageId": "99576971828611",
+      "path": "Icons/Friends.png",
+      "tool": "built-in image_gen",
+      "approval": "User approved the icon family and currency A; requested in-game implementation",
+      "generated": true,
+      "technical": {
+        "width": 1254,
+        "height": 1254,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "content_bounds": [
+          0,
+          33,
+          1232,
+          1236
+        ],
+        "normalization": "Original transparent PNG, no repainting or resizing",
+        "sha256": "3db6033ea4553d0051b85e6110e6f75440d1f05a4f63a5b468010f1c046a0663"
+      }
+    }
+  ],
+  "reusedPickaxeImageId": "140555305371223",
+  "publishedGame": false,
+  "savedCloudVersion": 9
+}

@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "Workspace_unchanged": true,
+    "Lighting_unchanged": true,
+    "ServerStorage_unchanged": true,
+    "ServerScriptService_unchanged": true,
+    "PowerGainTemplate_unchanged": true,
+    "MiningFeedback_unchanged": true,
+    "MiningAnimator_unchanged": true,
+    "PrototypeConfig_unchanged": true,
+    "one_hud": true,
+    "native_gui_matches_export": true,
+    "separate_icon_labels": true,
+    "authored_menu_buttons": true,
+    "source_matches_HUDTheme": true,
+    "source_matches_HUDLayout": true,
+    "source_matches_HUDController": true,
+    "no_purchase_calls": true,
+    "source_matches_DigController": true
+  },
+  "scope": "Approved mining HUD display slice; no economy or server gameplay changes"
+}
