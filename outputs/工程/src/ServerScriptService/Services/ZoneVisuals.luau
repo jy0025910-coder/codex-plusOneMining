@@ -7,6 +7,7 @@ function Visuals.Create(parent, name, placement, options)
     local zone = assets.Interactions.AutoSellZone:Clone()
     zone.Name = name
     zone:PivotTo(CFrame.identity)
+    if options.Scale then zone:ScaleTo(options.Scale) end
     local trigger = zone.Trigger
     trigger:RemoveTag("OreSellZone")
     trigger:SetAttribute("Enabled", options.Sell == true)

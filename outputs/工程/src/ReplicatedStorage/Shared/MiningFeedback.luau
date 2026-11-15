@@ -1,6 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local Style = require(script.Parent.MiningStyle)
+local RockImpact = require(script.Parent.RockImpact)
 local Feedback = {}
 Feedback.__index = Feedback
 
@@ -60,56 +61,7 @@ function Feedback:Impact(target)
     local character = self.player.Character
     local root = character and character:FindFirstChild("HumanoidRootPart")
     if not root then return end
-    local contact = root.Position + root.CFrame.LookVector * 3
-    local color = Color3.fromRGB(205, 160, 110)
-    if target and target:IsDescendantOf(workspace) then
-        local offset = root.Position - target.Position
-        local toward = offset.Magnitude > .01 and offset.Unit or Vector3.zAxis
-        contact = target.Position + toward * math.min(target.Size.X, target.Size.Z) * .48
-        if target:GetAttribute("TargetKind") ~= "Gate" then
-            contact = Vector3.new(contact.X, target.Position.Y + .2, contact.Z)
-        end
-        color = target:GetAttribute("TargetKind") == "Gate" and target.Color or color
-        local flash = Instance.new("Highlight")
-        flash.Adornee = target:GetAttribute("TargetKind") == "Gate" and target or target.Parent
-        flash.FillColor = Color3.fromRGB(255, 241, 187)
-        flash.FillTransparency = .63
-        flash.OutlineTransparency = 1
-        flash.DepthMode = Enum.HighlightDepthMode.Occluded
-        flash.Parent = target
-        TweenService:Create(flash, TweenInfo.new(.17), {FillTransparency = 1}):Play()
-        Debris:AddItem(flash, .20)
-    end
-    for i = 1, 7 do
-        local chip = Instance.new("WedgePart")
-        chip.Name = "MiningChip"
-        local size = self.rng:NextNumber(.10, .22)
-        chip.Size = Vector3.new(size, size * .7, size * 1.15)
-        chip.Color = i % 3 == 0 and Color3.fromRGB(255, 213, 117) or color
-        chip.Material = Enum.Material.SmoothPlastic
-        chip.Anchored = true
-        chip.CanCollide = false
-        chip.CanQuery = false
-        chip.CanTouch = false
-        chip.CFrame = CFrame.new(contact) * CFrame.Angles(self.rng:NextNumber(), self.rng:NextNumber(), self.rng:NextNumber())
-        chip.Parent = workspace
-        local burst = Vector3.new(self.rng:NextNumber(-1.6, 1.6), self.rng:NextNumber(.4, 1.6), self.rng:NextNumber(-1.6, 1.6))
-        TweenService:Create(chip, TweenInfo.new(.14), {Position = contact + burst}):Play()
-        task.delay(.14, function()
-            if chip.Parent then
-                TweenService:Create(chip, TweenInfo.new(.22), {Position = chip.Position - Vector3.new(0, 1, 0), Transparency = 1}):Play()
-            end
-        end)
-        Debris:AddItem(chip, .39)
-    end
-    local sound = Instance.new("Sound")
-    sound.Name = "PickaxeImpact"
-    sound.SoundId = "rbxasset://sounds/action_jump_land.mp3"
-    sound.Volume = .23
-    sound.PlaybackSpeed = self.rng:NextNumber(1.2, 1.5)
-    sound.Parent = root
-    sound:Play()
-    Debris:AddItem(sound, 1.2)
+    RockImpact.Play(target,root,self.rng)
 end
 
 function Feedback:Stroke(target, amount, speed)

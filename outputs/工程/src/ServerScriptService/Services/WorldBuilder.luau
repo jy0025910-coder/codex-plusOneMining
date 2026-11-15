@@ -3,6 +3,7 @@ local Visuals = require(script.Parent.ZoneVisuals)
 local Factory = require(script.Parent.MerchantAssets)
 local assets = game.ServerStorage.GameAssets
 local MiningAssets = require(script.Parent.MiningAssets)
+local Environment = require(script.Parent.CampEnvironment)
 local Builder = {}
 local V, C = Vector3.new, CFrame.new
 local sand = Color3.fromRGB(218,177,119)
@@ -76,7 +77,7 @@ local function ore(parent,name,pos,color,crystal)
 end
 local function board(parent,x,title,color,kind)
     local m=model(parent,kind)
-    local panel=part(m,"Board",V(10,12,.5),C(x,7.1,4)*CFrame.Angles(0,-.16,0),color,true)
+    local panel=part(m,"Board",V(10,12,.5),C(x,8,-10)*CFrame.Angles(0,-.16,0),color,true)
     local surface=Instance.new("SurfaceGui")
     surface.Name="Scores"
     surface.Face=Enum.NormalId.Back
@@ -103,7 +104,7 @@ local function board(parent,x,title,color,kind)
     end
     panel:SetAttribute("BoardStat",kind)
     panel:AddTag("CampLeaderboard")
-    for _,dx in {-3.5,3.5}do part(m,"Board leg",V(.5,2,.6),C(x+dx,1,4),slate,true)end
+    for _,dx in {-3.5,3.5}do part(m,"Board leg",V(.5,2,.6),C(x+dx,1.5,-10),slate,true)end
 end
 
 function Builder.Build()
@@ -112,81 +113,51 @@ function Builder.Build()
     local town=model(nil,"Gem Gulch")
     town:SetAttribute("AssetId","World.CanyonTown")
     town:SetAttribute("PrototypeVersion",Config.Version)
-    local floor=part(town,"Desert floor",V(130,2,245),C(0,-1,-53),sand,true,Enum.Material.Sand)
-    town.PrimaryPart=floor
-    local paving=model(town,"Sandstone paving")
-    -- Warm grey sandstone slabs form a clear plaza with alternating long joints.
-    for row=0,13 do
-        for col=0,17 do
-            local x=-51+col*6
-            local z=-24+row*5
-            local brightness=(row+col)%3*5
-            part(paving,"Sandstone slab",V(5.91,.16,4.91),C(x,.08,z),Color3.fromRGB(173+brightness,164+brightness,144+brightness),true)
-        end
-    end
-    local landscaping=model(town,"Canyon rim")
-    for _,side in {-1,1} do
-        for i=0,8 do
-            local z=42-i*10
-            local h=14+(i%3)*4
-            part(landscaping,"Sandstone cliff",V(11,h,10.3),C(side*61,h/2,z),rock,true,Enum.Material.Sandstone)
-            part(landscaping,"Cliff cap",V(11.4,.7,10.5),C(side*61,h+.2,z),sand,true)
-        end
-    end
-    -- At the rear, the canyon opens into one narrow mine.
-    for _,x in {-39,39}do
-        part(landscaping,"Mine shoulder",V(44,24,12),C(x,12,-30),rock,true,Enum.Material.Sandstone)
-        part(landscaping,"Mine shoulder cap",V(45,1,13),C(x,24,-30),sand,true)
-    end
-    part(landscaping,"Mine lintel cliff",V(30,9,12),C(0,21,-30),rock,true,Enum.Material.Sandstone)
+    town.Parent=workspace
+    Environment.Build(town)
     local spawn=Instance.new("SpawnLocation")
-    spawn.Name="Arrival"
-    spawn.Size=V(7,.2,6)
-    spawn.CFrame=C(0,.25,36)
-    spawn.Anchored=true
-    spawn.Neutral=true
-    spawn.Transparency=1
-    spawn.CanCollide=false
-    spawn.Duration=0
-    spawn.Parent=town
-    label(town,"Hub title",C(0,11,34),Vector2.new(18,2),"晶脉峡谷  ·  矿工休息站")
-    local buyer=assets.Stations.OreBuyer:Clone()
-    buyer.Name="OreBuyer"
-    buyer:PivotTo(C(-17,.18,27))
-    buyer.Parent=town
-    -- Reuse the existing NPC and counter contract for the tool store.
-    local shop=Factory.CreateStall(town,"ToolShop",C(17,.18,27),{Title="镐子铺",Canopy=Color3.fromRGB(66,173,212),Accent=Color3.fromRGB(70,121,132)})
+    spawn.Name="Arrival";spawn.Size=V(7,.2,6);spawn.CFrame=C(Config.Hub.Arrival)
+    spawn.Anchored=true;spawn.Neutral=true;spawn.Transparency=1;spawn.CanCollide=false;spawn.Duration=0;spawn.Parent=town
+    label(town,"Hub title",C(0,8,69),Vector2.new(22,2),"晶脉峡谷  ·  矿工休息站")
+    local buyer=assets.Stations.OreBuyer:Clone();buyer.Name="OreBuyer"
+    buyer:PivotTo(C(-27,.43,27)*CFrame.Angles(0,math.rad(135),0));buyer.Parent=town
+    local shopCF=C(27,.43,27)*CFrame.Angles(0,math.rad(-135),0)
+    local shop=Factory.CreateStall(town,"ToolShop",shopCF,{Title="镐子铺",Canopy=Color3.fromRGB(67,193,241),Accent=Color3.fromRGB(70,121,132)})
     Factory.AttachMerchant(shop)
-    local upgrade=part(shop,"Upgrade",V(.2,.2,.2),C(17,3.5,30),cream)
+    local upgrade=part(shop,"Upgrade",V(.2,.2,.2),shopCF*C(0,3.5,3),cream)
     upgrade.Transparency=1
     local prompt=Instance.new("ProximityPrompt")
     prompt.Name="Interact";prompt.ActionText="升级工具 · 16 金币";prompt.ObjectText="镐子铺";prompt.MaxActivationDistance=10;prompt.RequiresLineOfSight=false;prompt.Parent=upgrade
-    Visuals.Create(shop,"ShopZone",C(17,.18,35),{Color=Color3.fromRGB(61,190,245)})
+    Visuals.Create(shop,"ShopZone",shopCF*C(0,0,8),{Color=Color3.fromRGB(61,190,245)})
+    for _,cfg in {{"OreIndex",-27,-27,45,"矿石图鉴 · 筹备中",Color3.fromRGB(255,185,74)},{"BackpackShop",27,-27,-45,"背包铺 · 筹备中",Color3.fromRGB(190,127,246)}}do
+        local cf=C(cfg[2],.43,cfg[3])*CFrame.Angles(0,math.rad(cfg[4]),0)
+        local stall=Factory.CreateStall(town,cfg[1],cf,{Title=cfg[5],Canopy=cfg[6],Accent=Color3.fromRGB(132,100,73)})
+        Factory.AttachMerchant(stall)
+    end
     local training=model(town,"Training")
-    label(training,"Training title",C(-34,11,8),Vector2.new(17,2),"训练矿场",Color3.fromRGB(138,230,228))
     for i,cfg in Config.Trainings do
-        local z=18-(i-1)*14
-        local pad=Visuals.Create(training,"TrainingPad"..i,C(-35,.19,z),{
-            Color=cfg.Color,Tag="TrainingZone",Attributes={TrainingIndex=i,Gain=cfg.Gain,RequiredPower=cfg.Required},
+        local pos=cfg.Position
+        part(training,"Practice platform",V(25,.35,25),C(pos+V(0,-.05,0)),Color3.fromRGB(145,155,153),true)
+        local pad=Visuals.Create(training,"TrainingPad"..i,C(pos+V(0,.12,0)),{
+            Scale=2.12,Color=cfg.Color,Tag="TrainingZone",Attributes={TrainingIndex=i,Gain=cfg.Gain,RequiredPower=cfg.Required},
         })
-        local m,target=ore(training,"TrainingRock"..i,V(-35,.2,z),cfg.Color,i>1)
-        target.CanQuery=true
-        m:SetAttribute("TrainingIndex",i)
-        label(m,"Training label",C(-35,7.7,z),Vector2.new(13,2.2),cfg.Name.."\n+"..cfg.Gain.." 力量 / 次"..(cfg.Required>0 and (" · 需 "..cfg.Required) or ""))
+        local m,target=ore(training,"TrainingRock"..i,pos+V(0,.28,0),cfg.Color,i>1)
+        target.CanQuery=true;m:SetAttribute("TrainingIndex",i)
+        label(m,"Training label",C(pos+V(0,cfg.Height+2.8,0)),Vector2.new(19,3),cfg.Name.."\n+"..cfg.Gain.." 力量 / 次"..(cfg.Required>0 and (" · 需 "..cfg.Required) or ""),cfg.Color:Lerp(Color3.new(1,1,1),.6))
     end
     local rankings=model(town,"Rankings")
-    label(rankings,"Rank title",C(34,16,1),Vector2.new(18,2),"矿工荣誉榜",Color3.fromRGB(255,209,110))
-    board(rankings,27,"力量榜",Color3.fromRGB(255,198,84),"Power")
-    board(rankings,40,"金币榜",Color3.fromRGB(93,221,156),"Coins")
-    label(rankings,"Board scope",C(34,1,12),Vector2.new(16,1),"当前服务器")
+    label(rankings,"Rank title",C(58,18,-10),Vector2.new(18,2),"矿工荣誉榜",Color3.fromRGB(255,209,110))
+    board(rankings,49,"力量榜",Color3.fromRGB(255,198,84),"Power")
+    board(rankings,66,"金币榜",Color3.fromRGB(93,221,156),"Coins")
+    label(rankings,"Board scope",C(58,1.5,16),Vector2.new(16,1),"当前服务器")
     local mine=model(town,"Mine")
-    label(mine,"Mine title",C(0,15,-23),Vector2.new(22,2.4),"深入矿洞",cream)
+    label(mine,"Mine title",C(0,16,Config.Hub.MineFront+2),Vector2.new(22,2.4),"深入矿洞",cream)
     for _,x in {-13.5,13.5}do
-        part(mine,"Entrance timber",V(1.2,13,1.3),C(x,6.5,-23),Color3.fromRGB(113,76,48),true)
+        part(mine,"Entrance timber",V(1.2,13,1.3),C(x,6.5,Config.Hub.MineFront+2),Color3.fromRGB(113,76,48),true)
     end
-    part(mine,"Entrance beam",V(29,1.2,1.5),C(0,13,-23),Color3.fromRGB(139,96,59),true)
+    part(mine,"Entrance beam",V(29,1.2,1.5),C(0,13,Config.Hub.MineFront+2),Color3.fromRGB(139,96,59),true)
     for i,cfg in Config.Layers do
-        local front=-25-(i-1)*34
+        local front=Config.Hub.MineFront-(i-1)*34
         local room=model(mine,"Layer"..i)
         room:SetAttribute("LayerIndex",i)
         room:SetAttribute("RareChance",cfg.RareChance)
@@ -216,12 +187,10 @@ function Builder.Build()
         end
         for _,x in {-11,11}do lamp(room,x,front-13)end
     end
-    part(mine,"Deep rock end",V(30,15,3),C(0,7.5,-128),slate,true,Enum.Material.Slate)
-    label(mine,"Demo end",C(0,5,-123),Vector2.new(20,2),"已到达本次勘探终点")
-    for _,p in {{-10,32},{10,32},{-10,15},{10,15},{-10,-7},{10,-7},{-22,5},{22,15}}do lamp(town,p[1],p[2])end
-    local old=workspace:FindFirstChild("Gem Gulch")
-    town.Parent=workspace
-    if old then old:Destroy()end
+    part(mine,"Deep rock end",V(30,15,3),C(0,7.5,Config.Hub.MineFront-103),slate,true,Enum.Material.Slate)
+    label(mine,"Demo end",C(0,5,Config.Hub.MineFront-98),Vector2.new(20,2),"已到达本次勘探终点")
+    for _,p in {{-15,58},{15,58},{-15,-58},{15,-58},{-37,13},{-37,-13},{38,13},{38,-13}}do lamp(town,p[1],p[2])end
+    if existing then existing:Destroy()end
     return town
 end
 

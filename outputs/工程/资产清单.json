@@ -46,6 +46,12 @@
       "role": "砂岩主体与嵌入矿物，8 个正式 MeshPart；MeshRole 和 BaseColor 支持换色",
       "source": "资产/源文件/MiningAssets.blend",
       "prefab": "资产/导出/SandstoneOre.rbxmx"
+    },
+    {
+      "id": "Sign.NeonCampBoard",
+      "location": "ServerStorage.GameAssets.Signs.NeonCampBoard",
+      "role": "独立霓虹广告牌，标题与副标题可编辑，面板中心为摆放轴",
+      "prefab": "资产/导出/NeonCampBoard.rbxmx"
     }
   ],
   "capacity": 5,
@@ -110,5 +116,37 @@
       "timingConfig": "ReplicatedStorage.Shared.MiningStyle",
       "preview": "资产/导出/右肩扛镐实景.png"
     }
+  },
+  "mapPolish": {
+    "date": "2026-11-15",
+    "layout": "四面围合的方形峡谷，四角内凸，中央十字石砖道路",
+    "stalls": [
+      "OreBuyer",
+      "ToolShop",
+      "OreIndex（筹备中）",
+      "BackpackShop（筹备中）"
+    ],
+    "practice": "左侧凹位三块巨型矿石",
+    "rockHeights": [
+      10.658,
+      11.541,
+      12.28
+    ],
+    "neonSign": "练功区",
+    "modules": [
+      "CampEnvironment",
+      "WorldBuilder",
+      "MiningAssets",
+      "RockImpact"
+    ],
+    "verified": "单客户端 R15：进入/离开自动练习，泛白、抖动及复位、大碎屑、第一层扣血、五格采矿、出售；东、西、南边界及入口肩部射线封闭检查",
+    "notVerified": [
+      "多客户端",
+      "真实手机性能"
+    ],
+    "screenshots": [
+      "资产/导出/十字峡谷地图总览.png",
+      "资产/导出/巨型矿石练功区.png"
+    ]
   }
 }
