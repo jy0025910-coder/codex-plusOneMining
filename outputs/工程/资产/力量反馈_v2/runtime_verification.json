@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-15",
+  "mode": "Studio solo Test, Client",
+  "placeId": 95023028297106,
+  "savedCloudVersion": 4,
+  "viewport": [1072, 431],
+  "imageId": "140555305371223",
+  "imageLoadedInPlayerGui": true,
+  "actualMouseClick": {
+    "powerBefore": 1,
+    "powerAfter": 2,
+    "popupClass": "ImageLabel",
+    "popupAmount": "+1",
+    "miningStrokeAtAfterClick": null,
+    "remainingPopupsAfterOneSecond": 0
+  },
+  "temporaryReviewObjectRemoved": true,
+  "editTemplateVersionAfterStopping": 2,
+  "existingOutputWarning": "203785492 Asset type does not match requested type",
+  "notTested": ["Mobile", "Multiplayer", "Full mining progression"]
+}

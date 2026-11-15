@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "map_unchanged": true,
+    "lighting_unchanged": true,
+    "server_assets_unchanged": true,
+    "server_gameplay_unchanged": true,
+    "number_style_unchanged": true,
+    "uses_image_label": true,
+    "no_viewport_mesh_camera": true,
+    "source_matches": true,
+    "uploaded_image_configured": true,
+    "matches_studio_component_export": true
+  },
+  "image": "rbxassetid://140555305371223",
+  "scope": "Selected cartoon pickaxe B replaces the UI thumbnail; number and all gameplay preserved",
+  "not_tested": [
+    "Mobile device performance",
+    "Multiplayer"
+  ]
+}

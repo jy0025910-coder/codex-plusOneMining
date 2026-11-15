@@ -1,0 +1,18 @@
+{
+  "selected": "B",
+  "source": "Built-in image_gen; user selected second design",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "delivery_size": [
+    512,
+    512
+  ],
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "normalization": "Uniform resize only; no repainting or silhouette changes",
+  "sha256": "e6f804cb17cf7c9fbc5cdac647adb88421d389990c3b9348b4631de9846028e5"
+}

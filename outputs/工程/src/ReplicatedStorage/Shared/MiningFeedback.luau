@@ -34,10 +34,13 @@ function Feedback:CreatePowerPopup(amount)
     if not template then return end
     local popup=template:Clone();popup.Name="PowerGain";popup.Visible=true
     popup.Amount.Text="+"..amount
-    local camera=popup.Icon:FindFirstChildOfClass("Camera") or Instance.new("Camera")
-    camera.Name="IconCamera";camera.CFrame=popup.Icon:GetAttribute("PreviewCameraFrame")
-    camera.FieldOfView=popup.Icon:GetAttribute("PreviewFieldOfView")
-    camera.Parent=popup.Icon;popup.Icon.CurrentCamera=camera
+    -- Keep older reusable viewport templates compatible; v2 uses a flat image.
+    if popup.Icon:IsA("ViewportFrame") then
+        local camera=popup.Icon:FindFirstChildOfClass("Camera") or Instance.new("Camera")
+        camera.Name="IconCamera";camera.CFrame=popup.Icon:GetAttribute("PreviewCameraFrame")
+        camera.FieldOfView=popup.Icon:GetAttribute("PreviewFieldOfView")
+        camera.Parent=popup.Icon;popup.Icon.CurrentCamera=camera
+    end
     return popup
 end
 
