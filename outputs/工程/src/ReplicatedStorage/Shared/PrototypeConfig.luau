@@ -3,6 +3,9 @@ return {
     Version = 2,
     TrainingInterval = .8 / Style.AutoSwingSpeed,
     HitInterval = .38,
+    PracticeInterval = .15,
+    AutoGateDistance = 11,
+    AutoOreDistance = 11,
     Hub = {HalfSize=84, RoadHalfWidth=13, MineFront=-78, Arrival=Vector3.new(0,.3,64)},
     Trainings = {
         {Name="基础练习石", Gain=1, Required=0, Color=Color3.fromRGB(255,209,70), StoneColor=Color3.fromRGB(117,111,134), PracticeAsset="PracticeRock_A_Classic", PracticeScale=1, PracticeYaw=-math.pi/2, Height=6.5, Position=Vector3.new(-60,.24,30)},

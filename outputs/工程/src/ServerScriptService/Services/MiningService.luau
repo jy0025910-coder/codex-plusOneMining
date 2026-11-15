@@ -30,7 +30,7 @@ local function note(player, text)
 end
 local function init(player)
     if states[player] then return end
-    local state = {power=1,tier=1,unlocked=0,gates={},nodes={},lastHit=0,training=0,lastNote=0}
+    local state = {power=1,tier=1,unlocked=0,gates={},nodes={},lastHit=0,lastPractice=0,training=0,lastNote=0}
     states[player] = state
     Inventory.Create(player)
     player:SetAttribute("Power",1)
@@ -67,7 +67,7 @@ function Service.Hit(player,target)
         local hp=math.max(0,state.gates[index]-state.power)
         state.power += 1
         player:SetAttribute("Power",state.power)
-        Motion.Play(player,target)
+        Motion.Play(player,target,Style.AutoSwingSpeed)
         state.gates[index]=hp
         player:SetAttribute("Gate"..index.."HP",hp)
         wire.Feedback:FireClient(player,"hit",target,hp,Config.Layers[index].WallHealth)
@@ -85,7 +85,7 @@ function Service.Hit(player,target)
     state.nodes[target]=health
     state.power += 1
     player:SetAttribute("Power",state.power)
-    Motion.Play(player,target)
+    Motion.Play(player,target,Style.AutoSwingSpeed)
     wire.Feedback:FireClient(player,"hit",target,health,Config.Layers[index].OreHealth)
     if health==0 then
         local roll=rng:NextNumber()
@@ -103,22 +103,45 @@ function Service.Hit(player,target)
     end
 end
 
-function Service.Practice(player, target)
+-- Clicking always grants strength only. It never targets or starts a swing.
+function Service.Practice(player)
     local state = states[player]
     if not state or not living(player) or not Equipment.GetEquipped(player.Character) then return end
-    if os.clock() - state.lastHit < .35 then return end
-    if target ~= nil then
-        if typeof(target) ~= "Instance" or not target:IsA("BasePart") then return end
-        if not target:IsDescendantOf(camp.Training) or not target:HasTag("TrainingTarget") then return end
-        if not within(player,target,19) then return end
-        local index = target:GetAttribute("TrainingIndex")
-        if not Config.Trainings[index] or state.power < Config.Trainings[index].Required then return end
-    end
-    state.lastHit = os.clock()
+    if os.clock() - state.lastPractice < Config.PracticeInterval then return end
+    state.lastPractice = os.clock()
     state.power += 1
     player:SetAttribute("Power",state.power)
-    Motion.Play(player,target)
-    wire.Feedback:FireClient(player,"practice",target,1)
+    wire.Feedback:FireClient(player,"practice",nil,1)
+end
+
+local function nearbyMineTarget(player,state,root)
+    local best,nearest=nil,math.huge
+    local full=Inventory.Count(player)>=Catalog.Capacity
+    for _,target in Collection:GetTagged("MineTarget")do
+        if not target:IsA("BasePart") or not target:IsDescendantOf(camp.Mine) then continue end
+        local index=target:GetAttribute("LayerIndex")
+        if typeof(index)~="number" then continue end
+        local kind=target:GetAttribute("TargetKind")
+        if kind=="Gate" then
+            if index~=state.unlocked+1 then continue end
+            local point=target.CFrame:PointToObjectSpace(root.Position)
+            if math.abs(point.X)>target.Size.X/2+1 or point.Z<0 or point.Z>Config.AutoGateDistance then continue end
+        elseif kind=="Ore" then
+            if full or index>state.unlocked then continue end
+        else continue end
+        local distance=(root.Position-target.Position).Magnitude
+        local range=kind=="Gate" and 19 or Config.AutoOreDistance
+        if distance>range or distance>=nearest then continue end
+        local params=RaycastParams.new();params.FilterType=Enum.RaycastFilterType.Exclude
+        local excluded={player.Character}
+        for i=1,state.unlocked do table.insert(excluded,camp.Mine["Layer"..i].Gate)end
+        params.FilterDescendantsInstances=excluded
+        local hit=workspace:Raycast(root.Position,target.Position-root.Position,params)
+        -- An already-open gate is locally hidden; exclude it on this player's query.
+        if hit and hit.Instance~=target and not (kind=="Ore" and hit.Instance:IsDescendantOf(target.Parent)) then continue end
+        best,nearest=target,distance
+    end
+    return best
 end
 
 local function stepTraining(dt)
@@ -155,7 +178,16 @@ local function stepTraining(dt)
             end
         else
             state.training=0
+            local target=root and Equipment.GetEquipped(player.Character) and nearbyMineTarget(player,state,root)
+            player:SetAttribute("AutoMining",target~=nil)
+            if target then
+                Service.Hit(player,target)
+            elseif state.autoTarget then
+                Motion.Stop(player)
+            end
+            state.autoTarget=target
         end
+        if gain>0 then player:SetAttribute("AutoMining",false);state.autoTarget=nil end
         if root then
             -- Physical gate visuals are local. Progress is also enforced by the server.
             local nextGate=camp.Mine:FindFirstChild("Layer"..(state.unlocked+1))
@@ -192,7 +224,7 @@ function Service.Start()
     Players.PlayerAdded:Connect(init)
     Players.PlayerRemoving:Connect(function(p)states[p]=nil;Motion.Stop(p)end)
     for _,p in Players:GetPlayers()do init(p)end
-    wire.Dig.OnServerEvent:Connect(Service.Hit)
+    -- Mining hits originate only from the authoritative proximity loop.
     wire:WaitForChild("Practice").OnServerEvent:Connect(Service.Practice)
     local returnEvent=wire:FindFirstChild("ReturnToCamp")
     if not returnEvent then

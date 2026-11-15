@@ -29,32 +29,46 @@ function Feedback:ClickRing(position)
     Debris:AddItem(ring, .28)
 end
 
+function Feedback:CreatePowerPopup(amount)
+    local template=script.Parent:FindFirstChild("PowerGainTemplate")
+    if not template then return end
+    local popup=template:Clone();popup.Name="PowerGain";popup.Visible=true
+    popup.Amount.Text="+"..amount
+    local camera=popup.Icon:FindFirstChildOfClass("Camera") or Instance.new("Camera")
+    camera.Name="IconCamera";camera.CFrame=popup.Icon:GetAttribute("PreviewCameraFrame")
+    camera.FieldOfView=popup.Icon:GetAttribute("PreviewFieldOfView")
+    camera.Parent=popup.Icon;popup.Icon.CurrentCamera=camera
+    return popup
+end
+
 function Feedback:Power(amount)
-    local number = Instance.new("TextLabel")
-    number.Name = "PowerGain"
-    number.AnchorPoint = Vector2.new(.5, .5)
-    number.Position = UDim2.fromScale(self.rng:NextNumber(.25, .78), self.rng:NextNumber(.25, .66))
-    number.Size = UDim2.fromOffset(150, 65)
-    number.BackgroundTransparency = 1
-    number.Font = Enum.Font.GothamBlack
-    number.Text = "+" .. amount
-    number.TextColor3 = Color3.fromRGB(177, 255, 160)
-    number.TextStrokeColor3 = Color3.fromRGB(37, 70, 49)
-    number.TextStrokeTransparency = .12
-    number.TextSize = 43
-    number.Rotation = self.rng:NextNumber(-8, 8)
-    number.Parent = self.gui
-    local scale = Instance.new("UIScale")
-    scale.Scale = .5
-    scale.Parent = number
-    TweenService:Create(scale, TweenInfo.new(.14, Enum.EasingStyle.Back), {Scale = 1}):Play()
-    TweenService:Create(number, TweenInfo.new(.75), {Position = number.Position - UDim2.fromOffset(0, 65)}):Play()
-    task.delay(.40, function()
-        if number.Parent then
-            TweenService:Create(number, TweenInfo.new(.3), {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
-        end
+    local popup=self:CreatePowerPopup(amount)
+    if not popup then return end
+    local previous=self.lastPowerPosition
+    local position
+    for _=1,4 do
+        position=Vector2.new(self.rng:NextNumber(.23,.77),self.rng:NextNumber(.28,.64))
+        if not previous or (position-previous).Magnitude>.16 then break end
+    end
+    self.lastPowerPosition=position
+    popup.Position=UDim2.fromScale(position.X,position.Y)
+    popup.Rotation=self.rng:NextNumber(-7,7)
+    popup.Parent=self.gui
+    local reduced=game:GetService("GuiService").ReducedMotionEnabled
+    local viewport=workspace.CurrentCamera.ViewportSize
+    local size=math.clamp(math.min(viewport.X/1000,viewport.Y/620),.68,1.18)
+    local scale=popup.PopScale
+    scale.Scale=reduced and size or size*.65
+    if not reduced then
+        popup.Icon.Rotation=-12
+        TweenService:Create(popup.Icon,TweenInfo.new(.22,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Rotation=0}):Play()
+        TweenService:Create(scale,TweenInfo.new(.16,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Scale=size}):Play()
+        TweenService:Create(popup,TweenInfo.new(.78,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{Position=popup.Position-UDim2.fromOffset(0,62*size)}):Play()
+    end
+    task.delay(.46,function()
+        if popup.Parent then TweenService:Create(popup,TweenInfo.new(.26),{GroupTransparency=1}):Play()end
     end)
-    Debris:AddItem(number, .78)
+    Debris:AddItem(popup,.76)
 end
 
 function Feedback:Impact(target)

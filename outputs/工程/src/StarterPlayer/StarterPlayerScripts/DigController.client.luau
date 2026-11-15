@@ -52,7 +52,8 @@ local function refresh()
     local training=p:GetAttribute("TrainingGain")or 0
     local coins=p:GetAttribute("Coins")or 0
     local count=p:GetAttribute("Ore")or 0
-    power.Text="力量 "..value..(training>0 and ("  ·  自动训练 +"..training) or "")
+    local mining=p:GetAttribute("AutoMining")==true
+    power.Text="力量 "..value..(training>0 and ("  ·  自动训练 +"..training) or mining and "  ·  自动采矿" or "")
     bag.Text="背包 "..count.."/5     金币 "..coins
     depth.Text="已打通 "..(p:GetAttribute("DeepestLayer")or 0).."/"..#cfg.Layers.." 层"
     local names={}
@@ -62,7 +63,7 @@ local function refresh()
         table.insert(names,ore and (ore.Name.." "..ore.Value.."金")or "空格")
     end
     slots.Text=table.concat(names,"  |  ")
-    guide.Text=count>=5 and "背包满了 · 返回摊位，走进绿色光幕出售" or training>0 and "正在自动敲矿训练 · 离开光幕即可停止" or "点击 +1 力量  ·  走进左侧练习区自动敲击  ·  前方进入矿洞"
+    guide.Text=count>=5 and "背包满了 · 返回摊位，走进绿色光幕出售" or training>0 and "正在自动敲矿训练 · 离开光幕即可停止" or mining and "正在自动采矿 · 走开即可停止" or "点击 +1 力量  ·  走进左侧练习区自动敲击  ·  靠近矿门自动挖掘"
     for i=1,#cfg.Layers do
         local layer=camp.Mine:FindFirstChild("Layer"..i)
         if layer then
@@ -77,7 +78,7 @@ local function refresh()
         end
     end
 end
-for _,key in {"Power","TrainingGain","Coins","Ore","DeepestLayer"}do p:GetAttributeChangedSignal(key):Connect(refresh)end
+for _,key in {"Power","TrainingGain","AutoMining","Coins","Ore","DeepestLayer"}do p:GetAttributeChangedSignal(key):Connect(refresh)end
 for i=1,#cfg.Layers do p:GetAttributeChangedSignal("Gate"..i.."HP"):Connect(refresh)end
 for i=1,5 do inv:WaitForChild("Slot"..i).Changed:Connect(refresh)end
 local function resize()
@@ -99,40 +100,31 @@ local function findTarget(part)
     local target=model and model:FindFirstChild("Target")
     return target and (target:HasTag("MineTarget") or target:HasTag("TrainingTarget")) and target or nil
 end
-local function send(part)
-    local target=findTarget(part)
-    if target and target:HasTag("MineTarget") then
-        wire.Dig:FireServer(target)
-    else
-        wire.Practice:FireServer(target)
-    end
+local function send()
+    wire.Practice:FireServer()
 end
 UIS.InputBegan:Connect(function(input,processed)
     if processed then return end
     if input.UserInputType==Enum.UserInputType.MouseButton1 then
         local inset = GuiService:GetGuiInset()
         feedbackEffects:ClickRing(UIS:GetMouseLocation()-inset)
-        send(mouse.Target)
-    elseif input.KeyCode==Enum.KeyCode.F or input.KeyCode==Enum.KeyCode.ButtonX then send(hovered)end
+        send()
+    elseif input.KeyCode==Enum.KeyCode.F or input.KeyCode==Enum.KeyCode.ButtonX then send()end
 end)
 UIS.TouchTapInWorld:Connect(function(pos,processed)
     if processed then return end
-    local cam=workspace.CurrentCamera
-    local ray=cam:ViewportPointToRay(pos.X,pos.Y)
-    local params=RaycastParams.new();params.FilterType=Enum.RaycastFilterType.Exclude;params.FilterDescendantsInstances={p.Character}
-    local result=workspace:Raycast(ray.Origin,ray.Direction*100,params)
     local inset = GuiService:GetGuiInset()
     feedbackEffects:ClickRing(pos-inset)
-    send(result and result.Instance or nil)
+    send()
 end)
 Run.RenderStepped:Connect(function()
     hovered=findTarget(mouse.Target)
     if hovered and hovered:GetAttribute("TargetKind")=="Training" and targetText:GetAttribute("Busy")~=true then
-        targetText.Text="点击练习  ·  +1 力量"
+        targetText.Text="走进光幕自动练习  ·  点击额外 +1 力量"
     elseif hovered and targetText:GetAttribute("Busy")~=true then
         local layer=hovered:GetAttribute("LayerIndex")
         local hp=hovered:GetAttribute("TargetKind")=="Gate" and p:GetAttribute("Gate"..layer.."HP")or hovered:GetAttribute("MaxHealth")
-        targetText.Text=hp>0 and ("点击敲击  ·  耐久 "..hp.."  ·  每次伤害 "..(p:GetAttribute("Power")or 1))or ""
+        targetText.Text=hp>0 and ("靠近自动敲击  ·  耐久 "..hp.."  ·  每次伤害 "..(p:GetAttribute("Power")or 1))or ""
     elseif not hovered and targetText:GetAttribute("Busy")~=true then targetText.Text=""end
 end)
 local noticeId=0
@@ -143,9 +135,10 @@ end
 wire.Feedback.OnClientEvent:Connect(function(mode,a,b,c)
     if mode=="note"then announce(a)
     elseif mode=="sale"then announce("已售出 "..b.." 块矿石  +"..a.." 金币")
-    elseif mode=="train" or mode=="practice" then feedbackEffects:Stroke(a,b,c)
+    elseif mode=="practice" then feedbackEffects:Power(b)
+    elseif mode=="train" then feedbackEffects:Stroke(a,b,c)
     elseif mode=="hit"then
-        feedbackEffects:Stroke(a,1)
+        feedbackEffects:Stroke(a,1,require(game.ReplicatedStorage.Shared.MiningStyle).AutoSwingSpeed)
         targetText:SetAttribute("Busy",true);targetText.Text="剩余耐久 "..b.."/"..c
         task.delay(.5,function()targetText:SetAttribute("Busy",false)end)
     end

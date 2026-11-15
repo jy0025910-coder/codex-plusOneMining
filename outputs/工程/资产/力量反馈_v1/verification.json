@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "map_unchanged": true,
+    "lighting_unchanged": true,
+    "server_assets_unchanged": true,
+    "pickaxe_viewport_icon": true,
+    "seven_existing_mesh_parts": true,
+    "no_template_scripts": true,
+    "source_matches_MiningService": true,
+    "source_matches_DigController": true,
+    "source_matches_MiningFeedback": true,
+    "source_matches_PrototypeConfig": true
+  },
+  "play": {
+    "mode": "Solo one client",
+    "click_gain": 1,
+    "click_no_swing": true,
+    "popup_cleanup": true,
+    "gate_auto_hp_sample": [
+      46,
+      10
+    ],
+    "gate1_completed": true,
+    "auto_stops_after_leaving": true,
+    "ore_auto_sample": [
+      3,
+      5
+    ],
+    "full_bag_stops": true,
+    "training_gain": 1,
+    "respawn_popup_camera": true
+  },
+  "not_tested": [
+    "Two clients",
+    "Touch",
+    "Controller",
+    "Mobile performance"
+  ],
+  "icon": "Existing Tool.IronPickaxe, no new image uploads",
+  "screenshot": "Temporary enlarged review component; harness removed"
+}
