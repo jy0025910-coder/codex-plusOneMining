@@ -1,0 +1,44 @@
+[
+  {
+    "name": "CanyonWall_A",
+    "triangles": 1160,
+    "vertices": 582,
+    "dimensions_blender": [
+      31.998071670532227,
+      19.99808120727539,
+      37.99699783325195
+    ],
+    "non_manifold_edges": 0,
+    "texture": "CanyonWall_A_BaseColor.png",
+    "uv_layers": 1,
+    "materials": 1
+  },
+  {
+    "name": "CanyonWall_B",
+    "triangles": 1160,
+    "vertices": 582,
+    "dimensions_blender": [
+      31.999156951904297,
+      20.99921226501465,
+      40.99954605102539
+    ],
+    "non_manifold_edges": 0,
+    "texture": "CanyonWall_B_BaseColor.png",
+    "uv_layers": 1,
+    "materials": 1
+  },
+  {
+    "name": "CanyonWall_Corner",
+    "triangles": 886,
+    "vertices": 445,
+    "dimensions_blender": [
+      25.999244689941406,
+      21.9991455078125,
+      31.99945640563965
+    ],
+    "non_manifold_edges": 0,
+    "texture": "CanyonWall_Corner_BaseColor.png",
+    "uv_layers": 1,
+    "materials": 1
+  }
+]

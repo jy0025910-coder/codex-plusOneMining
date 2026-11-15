@@ -1,0 +1,19 @@
+{
+  "checks": {
+    "original_town_unchanged": true,
+    "sample_paving_stall_npc_rock_zone_unchanged": true,
+    "lighting_unchanged": true,
+    "wall_collision_proxies_unchanged": true
+  },
+  "place": "C:\\Users\\Administrator\\Documents\\Codex\\2026-11-10\\blender-3d-roblox-roblox-3d-low\\outputs\\晶脉峡谷_三区矿洞初稿.rbxlx",
+  "scope": "Wall visual meshes and albedo only, plus edit-time authoring material-version metadata",
+  "not_tested": [
+    "Full gameplay loop",
+    "Multi-client",
+    "Mobile performance"
+  ],
+  "exports": [
+    "Camp_Sample_Library_v2.rbxmx",
+    "Camp_Art_Sample_v2.rbxmx"
+  ]
+}

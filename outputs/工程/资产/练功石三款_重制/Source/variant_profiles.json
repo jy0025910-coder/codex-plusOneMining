@@ -1,0 +1,32 @@
+{
+  "A": {
+    "name": "PracticeRock_A_Classic",
+    "kind": "gold_spiral",
+    "seed": 32,
+    "base": "756F86",
+    "light": "A9A2B5",
+    "dark": "484454",
+    "mark": "FFD146",
+    "mark_shadow": "C8902E"
+  },
+  "B": {
+    "name": "PracticeRock_B_Rune",
+    "kind": "diamond",
+    "seed": 54,
+    "base": "119DDD",
+    "light": "76DDF5",
+    "dark": "086799",
+    "mark": "B6FAFF",
+    "mark_shadow": "37CADA"
+  },
+  "C": {
+    "name": "PracticeRock_C_Layered",
+    "kind": "spiral",
+    "seed": 86,
+    "base": "8F55D1",
+    "light": "C391ED",
+    "dark": "59338A",
+    "mark": "E9B9FF",
+    "mark_shadow": "B876E4"
+  }
+}

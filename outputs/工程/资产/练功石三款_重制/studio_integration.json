@@ -1,0 +1,93 @@
+{
+  "assetRevision": 3,
+  "place": "晶脉峡谷_三区矿洞初稿.rbxlx",
+  "library": "ServerStorage.GameAssets.TrainingRocks",
+  "world": "Workspace.Gem Gulch.Training",
+  "import": "Native Studio FBX upload",
+  "sizeStuds": [
+    8,
+    6.5,
+    6.5
+  ],
+  "front": "+X toward plaza",
+  "variants": [
+    {
+      "name": "PracticeRock_A_Classic",
+      "mesh": "rbxassetid://110965572345599",
+      "baseColor": "rbxassetid://128368912924656",
+      "station": 1
+    },
+    {
+      "name": "PracticeRock_B_Rune",
+      "mesh": "rbxassetid://91216537322638",
+      "baseColor": "rbxassetid://132708626747097",
+      "station": 2
+    },
+    {
+      "name": "PracticeRock_C_Layered",
+      "mesh": "rbxassetid://113713316021185",
+      "baseColor": "rbxassetid://112048073125390",
+      "station": 3
+    }
+  ],
+  "validation": {
+    "mode": "Studio solo, Server and Client inspected",
+    "clients": 1,
+    "meshPreload": "All 3 Success",
+    "automaticTraining": [
+      {
+        "station": "A",
+        "before": 92,
+        "after": 95,
+        "gain": 1
+      },
+      {
+        "station": "B",
+        "before": 186,
+        "after": 198,
+        "gain": 3
+      },
+      {
+        "station": "C",
+        "before": 228,
+        "after": 246,
+        "gain": 6
+      }
+    ],
+    "feedback": {
+      "flash": true,
+      "shake": true,
+      "chips": true,
+      "colliderStayedStill": true
+    },
+    "outsideZone": {
+      "powerBefore": 1068,
+      "powerAfter": 1068,
+      "gain": 0
+    },
+    "manualMouseClick": {
+      "powerBefore": 1068,
+      "powerAfter": 1069
+    },
+    "clickTargetRays": "All 3 hit Target",
+    "coplanarRoadBricksRemoved": 25,
+    "editCleanup": "Play stopped, particles and import staging models gone"
+  },
+  "knownUnrelatedOutput": [
+    {
+      "source": "Workspace.Folder.Model.Pack5.R6.PUT INTO SSS TO TEST (Server script service).Script",
+      "message": "Scriptforplayer is not a valid member of ServerScriptService",
+      "scope": "Existing external demonstration pack; not modified by this change."
+    },
+    {
+      "asset": "rbxassetid://203785492",
+      "message": "Asset type does not match requested type",
+      "scope": "Existing unrelated asset warning."
+    }
+  ],
+  "evidence": [
+    "Renders/Roblox_Studio_Integrated.png",
+    "Renders/Roblox_Practice_B_Playtest.png"
+  ],
+  "templateExport": "Exports/PracticeRock_TrainingLibrary.rbxmx"
+}

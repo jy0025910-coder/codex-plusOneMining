@@ -1,0 +1,116 @@
+{
+  "revision": 2,
+  "status": "StudioReviewed_AwaitingUserVisualReview",
+  "date": "2026-11-15",
+  "source": "ImageGen albedo, Blender UV bake and shallow-groove adjustment",
+  "walls": [
+    {
+      "name": "CanyonWall_A",
+      "version": 2,
+      "material": "Concrete",
+      "mesh": "rbxassetid://75075655121083",
+      "texture": "rbxassetid://80241492425048"
+    },
+    {
+      "name": "CanyonWall_B",
+      "version": 2,
+      "material": "Concrete",
+      "mesh": "rbxassetid://83014363158473",
+      "texture": "rbxassetid://124207543160591"
+    },
+    {
+      "name": "CanyonWall_Corner",
+      "version": 2,
+      "material": "Concrete",
+      "mesh": "rbxassetid://101269198525892",
+      "texture": "rbxassetid://113511616860746"
+    }
+  ],
+  "preload": {
+    "1": {
+      "asset": "rbxassetid://75075655121083",
+      "status": "Success"
+    },
+    "2": {
+      "asset": "rbxassetid://83014363158473",
+      "status": "Success"
+    },
+    "3": {
+      "asset": "rbxassetid://101269198525892",
+      "status": "Success"
+    },
+    "4": {
+      "asset": "rbxassetid://83014363158473",
+      "status": "Success"
+    },
+    "5": {
+      "asset": "rbxassetid://75075655121083",
+      "status": "Success"
+    },
+    "6": {
+      "asset": "rbxassetid://83014363158473",
+      "status": "Success"
+    },
+    "7": {
+      "asset": "rbxassetid://101269198525892",
+      "status": "Success"
+    },
+    "8": {
+      "asset": "rbxassetid://75075655121083",
+      "status": "Success"
+    },
+    "9": {
+      "asset": "rbxassetid://101269198525892",
+      "status": "Success"
+    },
+    "10": {
+      "asset": "rbxassetid://80241492425048",
+      "status": "Success"
+    },
+    "11": {
+      "asset": "rbxassetid://124207543160591",
+      "status": "Success"
+    },
+    "12": {
+      "asset": "rbxassetid://80241492425048",
+      "status": "Success"
+    },
+    "13": {
+      "asset": "rbxassetid://113511616860746",
+      "status": "Success"
+    },
+    "14": {
+      "asset": "rbxassetid://124207543160591",
+      "status": "Success"
+    },
+    "15": {
+      "asset": "rbxassetid://113511616860746",
+      "status": "Success"
+    },
+    "16": {
+      "asset": "rbxassetid://80241492425048",
+      "status": "Success"
+    },
+    "17": {
+      "asset": "rbxassetid://124207543160591",
+      "status": "Success"
+    },
+    "18": {
+      "asset": "rbxassetid://113511616860746",
+      "status": "Success"
+    }
+  },
+  "preserved": [
+    "Original Gem Gulch",
+    "Paving",
+    "Stall",
+    "NPC",
+    "Practice rock",
+    "Visual zone",
+    "Global lighting",
+    "Wall collision proxies"
+  ],
+  "verification": "verification.json",
+  "textures": "Textures",
+  "prompt": "texture_prompt.md"
+}

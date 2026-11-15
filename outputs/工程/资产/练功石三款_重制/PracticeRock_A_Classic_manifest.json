@@ -1,0 +1,31 @@
+{
+  "triangles": 940,
+  "vertices": 470,
+  "non_manifold_edges": 0,
+  "loose_vertices": 0,
+  "dimensions": [
+    8.0,
+    6.5,
+    6.5
+  ],
+  "mesh_objects": 1,
+  "materials": 1,
+  "scale": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "rotation": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "origin": "bottom_center",
+  "emission": false,
+  "uv_layers": 1,
+  "connected_components": 1,
+  "texture_size": [
+    2048,
+    2048
+  ]
+}

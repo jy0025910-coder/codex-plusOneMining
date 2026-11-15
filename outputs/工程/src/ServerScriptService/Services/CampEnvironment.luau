@@ -64,6 +64,15 @@ function Environment.Build(town)
     for row=-14,14 do
         for col=-14,14 do
             if math.abs(row)<=2 or math.abs(col)<=2 then
+                local coveredByPractice = false
+                for _, training in Config.Trainings do
+                    local position = training.Position
+                    if math.abs(col*5-position.X)+2.42<=12.5 and math.abs(row*5-position.Z)+2.42<=12.5 then
+                        coveredByPractice = true
+                        break
+                    end
+                end
+                if coveredByPractice then continue end
                 local variation=(row*7+col*11)%4
                 part(paving,"Cross paving brick",V(4.84,.17,4.84),C(col*5,.28,row*5),Color3.fromRGB(193+variation*5,190+variation*5,169+variation*5),true)
             end

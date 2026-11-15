@@ -65,6 +65,75 @@ function Factory.CreateRockVisual(parent, placement, options)
     return visual
 end
 
+function Factory.CreateTrainingRockVisual(parent, placement, profile)
+    local library = assets:FindFirstChild("TrainingRocks")
+    local template = library and library:FindFirstChild(profile.PracticeAsset)
+    assert(template and template:IsA("Model"), "Missing practice rock asset: " .. tostring(profile.PracticeAsset))
+    local visual = template:Clone()
+    visual.Name = "RockVisual"
+    visual:ScaleTo(profile.PracticeScale or 1)
+    visual:PivotTo(placement)
+    for _, part in visual:GetDescendants() do
+        if part:IsA("BasePart") then
+            part.Anchored = true
+            part.CanCollide = false
+            part.CanTouch = false
+            part.CanQuery = false
+        end
+    end
+    visual:SetAttribute("RestPivot", visual:GetPivot())
+    visual:SetAttribute("PracticeAsset", profile.PracticeAsset)
+    visual.Parent = parent
+    return visual
+end
+
+local function replaceTrainingRock(model, target, index, profile)
+    local oldOffset = target:GetAttribute("RockBaseOffset") or 2.2
+    local ground = (target.CFrame * CFrame.new(0, -oldOffset, 0)).Position
+    local placement = CFrame.new(ground) * CFrame.Angles(0, profile.PracticeYaw or -math.pi / 2, 0)
+    local visual = Factory.CreateTrainingRockVisual(model, placement, profile)
+    local bounds, size = visual:GetBoundingBox()
+    target.CFrame = bounds
+    target.Size = size
+    target.Shape = Enum.PartType.Block
+    target.Transparency = 1
+    target.Anchored = true
+    target.CanCollide = false
+    target.CanTouch = false
+    target.CanQuery = true
+    target.Color = profile.StoneColor
+    target:SetAttribute("RockBaseOffset", size.Y / 2)
+    target:SetAttribute("TargetKind", "Training")
+    target:SetAttribute("TrainingIndex", index)
+    target:SetAttribute("ImpactColor", profile.Color)
+    target:SetAttribute("LargeImpact", true)
+    target:AddTag("TrainingTarget")
+    -- Collision stays still while the visible stone shakes on the client.
+    -- A single convex hull follows the actual stone outline, not a large box.
+    local collider = visual.PrimaryPart:Clone()
+    for _, child in collider:GetChildren() do child:Destroy() end
+    collider.Name = "RockCollider"
+    collider.Transparency = 1
+    collider.TextureID = ""
+    collider.CastShadow = false
+    collider.Anchored = true
+    collider.CanCollide = true
+    collider.CanTouch = false
+    collider.CanQuery = false
+    collider.CollisionFidelity = Enum.CollisionFidelity.Hull
+    collider.Parent = model
+    local label = model:FindFirstChild("Training label")
+    if label and label:IsA("BasePart") then
+        label.CFrame = CFrame.new(ground + Vector3.new(0, size.Y + 2.3, 0))
+        local text = label:FindFirstChildWhichIsA("TextLabel", true)
+        if text then
+            text.Text = profile.Name .. "\n+" .. profile.Gain .. " 力量 / 次" .. (profile.Required > 0 and (" · 需 " .. profile.Required) or "")
+            text.TextColor3 = profile.Color:Lerp(Color3.new(1, 1, 1), .6)
+        end
+    end
+    return visual
+end
+
 function Factory.ReplaceRock(model, index, isTraining, color)
     local target = model:FindFirstChild("Target")
     if not target then return end
@@ -75,6 +144,9 @@ function Factory.ReplaceRock(model, index, isTraining, color)
         end
     end
     local profile=isTraining and Config.Trainings[index] or nil
+    if profile and profile.PracticeAsset then
+        return replaceTrainingRock(model, target, index, profile)
+    end
     local scale=profile and profile.Scale or .95
     local height=profile and profile.Height or 3.9*scale
     local rotation=profile and ({0,.42,-.35})[index] or index*.5

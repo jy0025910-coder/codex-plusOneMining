@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-15",
+  "status": "StudioReviewed_AwaitingUserVisualReview",
+  "scope": "S1 local camp sample only",
+  "sourcePlace": "晶脉峡谷_三区矿洞初稿.rbxlx",
+  "liveInspection": {
+    "stallTemplatePartCount": 307,
+    "origin": "420, 0, 0",
+    "sourceStallUnmodified": true,
+    "stallGeometryUnchanged": true,
+    "tags": 0,
+    "unanchored": 0,
+    "mainPrototypeVersion": 2,
+    "samplePath": "Workspace.Camp Art Sample",
+    "enabledPrompts": 0,
+    "wallAssets": [
+      {
+        "colorMap": "rbxassetid://103416857202470",
+        "name": "CanyonWall_A",
+        "route": "BlenderFallback",
+        "mesh": "rbxassetid://95063570110033",
+        "size": [
+          31.998071670532227,
+          37.99699783325195,
+          19.99808120727539
+        ]
+      },
+      {
+        "colorMap": "rbxassetid://76013258895621",
+        "name": "CanyonWall_B",
+        "route": "BlenderFallback",
+        "mesh": "rbxassetid://98689201519002",
+        "size": [
+          31.999156951904297,
+          40.999549865722656,
+          20.999217987060547
+        ]
+      },
+      {
+        "colorMap": "rbxassetid://88355292139828",
+        "name": "CanyonWall_Corner",
+        "route": "BlenderFallback",
+        "mesh": "rbxassetid://87986836517681",
+        "size": [
+          25.999244689941406,
+          31.99945831298828,
+          21.999147415161133
+        ]
+      }
+    ],
+    "scripts": 0,
+    "parts": 426
+  },
+  "wallGeometrySource": "Source/CanyonWall_Kit.blend",
+  "authoringSource": "Source/CampNativeKit.luau",
+  "routes": {
+    "wall": "Blender fallback after two native silhouette/material reviews",
+    "paving": "Native Parts, Concrete and Slate materials",
+    "stall": "Clone of existing MarketStall; same 307 BaseParts and same geometry; 112 wood parts and 190 cloth parts material/color changes; NPC unchanged"
+  },
+  "tests": {
+    "mode": "Studio solo",
+    "clients": 1,
+    "nativeSlabWalk": {
+      "input": "W held 1200 ms",
+      "from": [
+        420,
+        3.67,
+        16
+      ],
+      "observed": [
+        419.9986,
+        3.6094,
+        -3.2032
+      ],
+      "result": "Traversed slab seams without falling or remaining stuck"
+    },
+    "visualZoneNoGameplay": {
+      "position": [
+        431,
+        3.67,
+        -5
+      ],
+      "seconds": 1.2,
+      "powerBefore": 1,
+      "powerAfter": 1,
+      "coinsBefore": 0,
+      "coinsAfter": 0,
+      "trainingGain": 0
+    },
+    "notRun": [
+      "Full mine/sell loop regression",
+      "Multi-client",
+      "Device Simulator",
+      "Real mobile performance",
+      "Final wall geometry collision traversal after last mesh replacement"
+    ],
+    "geometryChecks": "All three final wall meshes closed/manifold, 1 material, 1 UV layer; see wall_geometry_report.json",
+    "outputNotes": [
+      "Asset 203785492 type mismatch still present, existed in earlier sessions.",
+      "FieldKit WaitForChild startup warning occurred; later Client inspection confirmed FieldKit present in both StarterGui and PlayerGui. Related script not changed.",
+      "No claim that the complete Output is warning-free."
+    ]
+  },
+  "knownVisualDifferences": [
+    "The local sample is not the full enlarged camp layout.",
+    "Wall broad shape and shallow strata implemented; texture still simpler than concept artwork.",
+    "Stall is the existing small design; no global rescale or structural redesign.",
+    "No full-map lighting change was made; existing approved character/rock lighting preserved.",
+    "Sample green zone is visual only, intentionally has no selling behavior."
+  ],
+  "evidence": [
+    "Renders/Native_Attempt_01.jpg",
+    "Renders/Native_Attempt_02.jpg",
+    "Renders/Studio_Sample_Overview.jpg",
+    "Renders/Studio_Sample_Close.jpg"
+  ]
+}

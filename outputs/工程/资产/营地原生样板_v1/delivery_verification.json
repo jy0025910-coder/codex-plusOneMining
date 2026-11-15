@@ -1,0 +1,76 @@
+{
+  "place": "C:\\Users\\Administrator\\Documents\\Codex\\2026-11-10\\blender-3d-roblox-roblox-3d-low\\outputs\\晶脉峡谷_三区矿洞初稿.rbxlx",
+  "saved_contains_sample": true,
+  "existing_script_sources_changed": [],
+  "owned_game_scripts_missing": [],
+  "external_demo_scripts_absent_vs_saved_disk_baseline": [
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack2#1/Model:s#1/Part:Torso#1/Script:Script#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack3#1/Model:POF:RE AURA PSYCHIC #1/Script:Read this rn#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack3#1/Model:aura#1/Script:Script#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack3#1/Model:Dummy#2/MeshPart:Torso#1/Script:Script#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:Model#1/Model:PoF:RE Aura Revamp: Blackhole#1/Script:README#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA MUTANTS RAGE#1/Part:Torso#1/Part:1#1/Script:Script to make it spin#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA MUTANTS RAGE#1/Part:Torso#1/Part:eye#1/Script:Script to make it spin#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA MUTANTS RAGE#1/Part:Torso#1/Part:SPECS#1/Script:Script to make it spin#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA MUTANTS RAGE#1/Part:Torso#1/Part:BEAM OF POWER#1/Script:Script to make it spin#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA MUTANTS RAGE#1/Part:Torso#1/Part:up#1/Script:Script to make it spin#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA MUTANTS RAGE#1/Script:Please read#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack4#1/Model:POF:RE AURA Pure Darkness (REVAMP)#1/Part:Torso#1/Model:Model#1/Script:Rotate#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack5#1/Model:POF:RE AURA HANMA#1/Script:README#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack5#1/Model:R6#1/Folder:PUT INTO SSS TO TEST (Server script service)#1/Script:Script#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack5#1/Model:R6#1/Folder:PUT INTO SSS TO TEST (Server script service)#1/Script:Scriptforplayer#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack5#1/Model:R6#1/Script:README#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack5#1/Model:R6#1/Script:Scriptforplayer#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack8#1/Model:POF:RE AURA: Hellzone Champion#1/Part:Torso#1/Attachment:Attachment Center Torso#1/ParticleEmitter:Skull#1/Script:S Emit#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack8#1/Model:POF:RE AURA: Hellzone Champion#1/Part:Torso#1/Attachment:Attachment Center Torso#1/ParticleEmitter:Timed Glow#1/Script:C Emit#1",
+    "/Workspace:Workspace#1/Folder:Folder#1/Model:Model#1/Model:Pack8#1/Model:POF:RE AURA: Hellzone Champion#1/Part:Torso#1/Attachment:Attachment Center Torso#1/ParticleEmitter:Timed Sparks#1/Script:S2 Emit#1"
+  ],
+  "baseline_note": "The disk snapshot can differ from the live user-edited scene at task start. This task did not edit Workspace.Folder. Do not restore external demo scripts from the older disk snapshot.",
+  "existing_town_serialized_properties_identical": true,
+  "image_checks": {
+    "Blender_Wall_Review.png": {
+      "size": [
+        1500,
+        750
+      ],
+      "format": "PNG",
+      "bytes": 1186662
+    },
+    "Native_Attempt_01.jpg": {
+      "size": [
+        1643,
+        1080
+      ],
+      "format": "JPEG",
+      "bytes": 428333
+    },
+    "Native_Attempt_02.jpg": {
+      "size": [
+        1643,
+        1080
+      ],
+      "format": "JPEG",
+      "bytes": 330481
+    },
+    "Studio_Sample_Close.jpg": {
+      "size": [
+        1021,
+        673
+      ],
+      "format": "JPEG",
+      "bytes": 193817
+    },
+    "Studio_Sample_Overview.jpg": {
+      "size": [
+        1021,
+        673
+      ],
+      "format": "JPEG",
+      "bytes": 169786
+    }
+  },
+  "exports": [
+    "Camp_Sample_Library.rbxmx",
+    "Camp_Art_Sample.rbxmx"
+  ]
+}

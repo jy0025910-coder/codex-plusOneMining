@@ -1,0 +1,22 @@
+{
+  "asset_revision": 3,
+  "changes": {
+    "A": "Right-hand lower/upper/back wrapping masses narrowed and thinned; left upper mass raised, extended upward and brought slightly forward.",
+    "C": "Both strata reduced to ~40% of previous inset depth, slightly narrower, with lighter seam base color.",
+    "B": "Unchanged: all ten artifact hashes match."
+  },
+  "unchanged_blue_files": {
+    "Source/PracticeRock_B_Rune.blend": "6085b572b4deaf07e6f865fe1614c015847df3345198a5450aaaf7ab38dbac3d",
+    "Exports/PracticeRock_B_Rune.fbx": "fde085610f200f50d9024be4394dff2df0eaf5c2f845809d6307ccccb97efcda",
+    "Exports/PracticeRock_B_Rune.glb": "6c520b302f922cb3f1c9a6a511eface4482189b313bbdb038cd6518c9d0495bc",
+    "Exports/PracticeRock_B_Rune_BaseColor.png": "d1ca289c98171c232858e370b843d492147e0bb4e11205c53f99364996fcbd83",
+    "Textures/PracticeRock_B_Rune_BaseColor.png": "d1ca289c98171c232858e370b843d492147e0bb4e11205c53f99364996fcbd83",
+    "Renders/PracticeRock_B_Rune_Back.png": "180bfc8c8ee7dbc0c3ed0e00084a2399b835cc70f8f73153004576fa0ab21463",
+    "Renders/PracticeRock_B_Rune_Front.png": "5061abafd84fbebe71f83541a33384db9d12b67570e6d7df29193aaf331b2831",
+    "Renders/PracticeRock_B_Rune_Hero.png": "0cb43ad9522c504eacbc630ce83e1b7ffdf4317ec419be3a54631cd8db7216a0",
+    "Renders/PracticeRock_B_Rune_Right.png": "e1d476f3132dbfc396bb64c375b27cf3802d89da124ea9dfaa24794fa119745a",
+    "Renders/PracticeRock_B_Rune_Top.png": "a386db42afafac60b47cdd5861fb55f68b873e5af49f897ef9222ae6d4411871"
+  },
+  "evidence": "Renders/A_C_Refinement_Before_After.png",
+  "studio_import": "Not performed in this Blender-only refinement."
+}

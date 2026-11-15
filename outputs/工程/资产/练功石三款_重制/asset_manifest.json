@@ -1,0 +1,152 @@
+{
+  "asset_version": 3,
+  "tool": "5.2.3 LTS",
+  "method": "Blender cut-plane solids, true inset fracture bands, UV inlaid symbols",
+  "visual_status": "User approved; integrated in the existing game",
+  "reference": "User three-rock design sheet and subsequent A/C adjustment request",
+  "studio_test": {
+    "status": "passed_solo",
+    "report": "studio_integration.json",
+    "evidence": [
+      "Renders/Roblox_Studio_Integrated.png",
+      "Renders/Roblox_Practice_B_Playtest.png"
+    ]
+  },
+  "variants": {
+    "PracticeRock_A_Classic": {
+      "triangles": 940,
+      "vertices": 470,
+      "non_manifold_edges": 0,
+      "loose_vertices": 0,
+      "dimensions": [
+        8,
+        6.5,
+        6.5
+      ],
+      "mesh_objects": 1,
+      "materials": 1,
+      "uv_layers": 1,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "bottom": 0,
+      "volume": 186.32053375739008,
+      "texture_size": [
+        2048,
+        2048
+      ],
+      "connected_components": 1,
+      "emission_strength": 0,
+      "packed_images": [
+        true
+      ],
+      "fbx_roundtrip": {
+        "mesh_objects": 1,
+        "triangles": 940,
+        "dimensions": [
+          8,
+          6.5,
+          6.5
+        ],
+        "uv_layers": 1
+      }
+    },
+    "PracticeRock_B_Rune": {
+      "triangles": 940,
+      "vertices": 472,
+      "non_manifold_edges": 0,
+      "loose_vertices": 0,
+      "dimensions": [
+        8,
+        6.500000476837158,
+        6.5
+      ],
+      "mesh_objects": 1,
+      "materials": 1,
+      "uv_layers": 1,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "bottom": 0,
+      "volume": 186.9177434352797,
+      "texture_size": [
+        2048,
+        2048
+      ],
+      "connected_components": 1,
+      "emission_strength": 0,
+      "packed_images": [
+        true
+      ],
+      "fbx_roundtrip": {
+        "mesh_objects": 1,
+        "triangles": 940,
+        "dimensions": [
+          8,
+          6.500000476837158,
+          6.5
+        ],
+        "uv_layers": 1
+      }
+    },
+    "PracticeRock_C_Layered": {
+      "triangles": 940,
+      "vertices": 472,
+      "non_manifold_edges": 0,
+      "loose_vertices": 0,
+      "dimensions": [
+        8,
+        6.5,
+        6.5
+      ],
+      "mesh_objects": 1,
+      "materials": 1,
+      "uv_layers": 1,
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "bottom": 0,
+      "volume": 165.7131185952592,
+      "texture_size": [
+        2048,
+        2048
+      ],
+      "connected_components": 1,
+      "emission_strength": 0,
+      "packed_images": [
+        true
+      ],
+      "fbx_roundtrip": {
+        "mesh_objects": 1,
+        "triangles": 940,
+        "dimensions": [
+          8,
+          6.5,
+          6.5
+        ],
+        "uv_layers": 1
+      }
+    }
+  }
+}

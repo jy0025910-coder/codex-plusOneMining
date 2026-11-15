@@ -1,0 +1,56 @@
+[
+  {
+    "name": "CanyonWall_A_v2",
+    "triangles": 1160,
+    "vertices": 582,
+    "non_manifold_edges": 0,
+    "size_blender": [
+      31.998071670532227,
+      19.99808120727539,
+      37.99699783325195
+    ],
+    "uv_layers": 1,
+    "materials": 1,
+    "texture_size": [
+      2048,
+      2048
+    ],
+    "texture": "C:\\Users\\Administrator\\Documents\\Codex\\2026-11-10\\blender-3d-roblox-roblox-3d-low\\outputs\\工程\\资产\\营地原生样板_v1\\Material_v2\\Textures\\CanyonWall_A_BaseColor_v2.png"
+  },
+  {
+    "name": "CanyonWall_B_v2",
+    "triangles": 1160,
+    "vertices": 582,
+    "non_manifold_edges": 0,
+    "size_blender": [
+      31.999156951904297,
+      20.99921226501465,
+      40.99954605102539
+    ],
+    "uv_layers": 1,
+    "materials": 1,
+    "texture_size": [
+      2048,
+      2048
+    ],
+    "texture": "C:\\Users\\Administrator\\Documents\\Codex\\2026-11-10\\blender-3d-roblox-roblox-3d-low\\outputs\\工程\\资产\\营地原生样板_v1\\Material_v2\\Textures\\CanyonWall_B_BaseColor_v2.png"
+  },
+  {
+    "name": "CanyonWall_Corner_v2",
+    "triangles": 886,
+    "vertices": 445,
+    "non_manifold_edges": 0,
+    "size_blender": [
+      25.999244689941406,
+      21.9991455078125,
+      31.99945640563965
+    ],
+    "uv_layers": 1,
+    "materials": 1,
+    "texture_size": [
+      2048,
+      2048
+    ],
+    "texture": "C:\\Users\\Administrator\\Documents\\Codex\\2026-11-10\\blender-3d-roblox-roblox-3d-low\\outputs\\工程\\资产\\营地原生样板_v1\\Material_v2\\Textures\\CanyonWall_Corner_BaseColor_v2.png"
+  }
+]
