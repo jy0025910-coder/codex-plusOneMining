@@ -1,0 +1,18 @@
+{
+  "BigInteger_synced": true,
+  "GameBalance_synced": true,
+  "ProgressionUIFactory_synced": true,
+  "MiningFeedback_synced": true,
+  "InventoryService_synced": true,
+  "MiningService_synced": true,
+  "ProgressionWorld_synced": true,
+  "HUDController_synced": true,
+  "DigController_synced": true,
+  "GameplayPanelsController_synced": true,
+  "ten_rooms": true,
+  "six_training_rocks": true,
+  "five_route_signs": true,
+  "template_hidden": true,
+  "no_test_interface": true,
+  "no_qa_objects": true
+}

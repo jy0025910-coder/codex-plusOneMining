@@ -84,7 +84,7 @@ end
 function Feedback:Stroke(target, amount, speed)
     task.delay(Style.ImpactTime / (speed or 1), function()
         self:Impact(target)
-        if amount and amount > 0 then self:Power(amount) end
+        if amount and amount ~= 0 and amount ~= "0" then self:Power(amount) end
     end)
 end
 

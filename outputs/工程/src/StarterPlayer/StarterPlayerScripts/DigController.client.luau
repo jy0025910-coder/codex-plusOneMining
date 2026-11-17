@@ -1,102 +1,147 @@
-require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("MiningAnimator")).Start()
-local Players=game:GetService("Players")
-local UIS=game:GetService("UserInputService")
-local Run=game:GetService("RunService")
-local p=Players.LocalPlayer
-local wire=game.ReplicatedStorage:WaitForChild("DigCamp")
-local cfg=require(game.ReplicatedStorage.Shared.PrototypeConfig)
-local camp=workspace:WaitForChild("Gem Gulch")
-local gui=p:WaitForChild("PlayerGui"):WaitForChild("FieldKit")
-gui:ClearAllChildren()
-gui.ResetOnSpawn=false
-local FeedbackEffects = require(game.ReplicatedStorage.Shared.MiningFeedback)
-local feedbackEffects = FeedbackEffects.new(gui,p)
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local Run = game:GetService("RunService")
 local GuiService = game:GetService("GuiService")
-local hud=p:WaitForChild("PlayerGui"):WaitForChild("MiningHUD"):WaitForChild("Root")
-local guide=hud.Status.Guide
-local toast=hud.Status.Toast
-local targetText=hud.Status.Target
-hud.ReturnToCamp.Activated:Connect(function()wire.ReturnToCamp:FireServer()end)
+local Shared = game.ReplicatedStorage:WaitForChild("Shared")
+local Big = require(Shared.BigInteger)
+local Balance = require(Shared.GameBalance)
+local Style = require(Shared.MiningStyle)
+require(Shared.MiningAnimator).Start()
+local player=Players.LocalPlayer
+local wire=game.ReplicatedStorage:WaitForChild("DigCamp")
+local camp=workspace:WaitForChild("Gem Gulch")
+local gui=player.PlayerGui:WaitForChild("FieldKit",30)
+if not gui then warn("FieldKit did not replicate");return end
+gui:ClearAllChildren()
+local effects=require(Shared.MiningFeedback).new(gui,player)
+local hudGui=player.PlayerGui:WaitForChild("MiningHUD",30)
+if not hudGui then warn("MiningHUD did not replicate");return end
+local hud=hudGui.Root
+local drops=Instance.new("Folder");drops.Name="LocalMiningDrops";drops.Parent=workspace
+local batchId=0
+local dropObjects={}
+local noticeId=0
+local rainbow={}
+local function announce(message)
+    noticeId+=1
+    local current=noticeId
+    hud.Status.Toast.Text=message
+    task.delay(3,function()if current==noticeId then hud.Status.Toast.Text="" end end)
+end
+local function clearDrops()
+    drops:ClearAllChildren();table.clear(dropObjects);table.clear(rainbow)
+end
 local function refresh()
-    local training=p:GetAttribute("TrainingGain")or 0
-    local count=p:GetAttribute("Ore")or 0
-    local mining=p:GetAttribute("AutoMining")==true
-    guide.Text=count>=5 and "背包满了 · 返回摊位，走进绿色光幕出售" or training>0 and "正在自动敲矿训练 · 离开光幕即可停止" or mining and "正在自动采矿 · 走开即可停止" or "点击 +1 力量  ·  走进左侧练习区自动敲击  ·  靠近矿门自动挖掘"
-    for i=1,#cfg.Layers do
-        local layer=camp.Mine:FindFirstChild("Layer"..i)
-        if layer then
-            local hp=p:GetAttribute("Gate"..i.."HP")or cfg.Layers[i].WallHealth
-            layer.Gate.CanCollide=hp>0
-            layer.Gate.CanQuery=hp>0
-            layer.Gate.LocalTransparencyModifier=hp==0 and 1 or 0
-            for _,part in layer:GetChildren()do
-                if part.Name=="Gate seam"then part.LocalTransparencyModifier=hp==0 and 1 or 0 end
-            end
-            layer["Gate label"].Lettering.Title.Text=hp==0 and ("第 "..i.." 层 · "..cfg.Layers[i].Name.."\n稀有矿 "..math.round(cfg.Layers[i].RareChance*100).."%")or ("第 "..i.." 层 · 岩壁 "..hp.."/"..cfg.Layers[i].WallHealth.."\n稀有矿 "..math.round(cfg.Layers[i].RareChance*100).."%")
+    local mine=camp:FindFirstChild("Mine")
+    local route=player:GetAttribute("RouteIndex") or 1
+    local profile=Balance.Routes[route]
+    for i=1,10 do
+        local room=mine and mine:FindFirstChild("Layer"..i)
+        if not room then continue end
+        local hp=player:GetAttribute("Gate"..i.."HP") or profile.Walls[i]
+        local gate=room.Gate
+        local open=hp=="0"
+        gate.CanCollide=not open;gate.CanQuery=not open
+        gate.LocalTransparencyModifier=open and 1 or 0
+        gate.Color=Color3.fromHex(profile.Hex)
+        for _,part in room:GetChildren() do
+            if part.Name=="Gate seam" then part.LocalTransparencyModifier=open and 1 or 0 end
         end
+        room["Gate label"].Lettering.Title.Text=profile.Label.." · 第 "..i.." 层\n"..(open and "已打通" or (Big.Format(hp).." / "..Big.Format(profile.Walls[i])))
+        local track=room["Gate label"].Lettering:FindFirstChild("HealthTrack")
+        if track then track.Fill.Size=UDim2.fromScale(math.clamp(tonumber(hp)/tonumber(profile.Walls[i]),0,1),1) end
     end
+    local full=(player:GetAttribute("Ore")or 0)>=5
+    local training=(player:GetAttribute("TrainingGain")or 0)>0
+    hud.Status.Guide.Text=full and "背包满了 · 返回绿色光幕出售，再选择矿道进矿"
+        or training and "正在训练 · 力量和经验同步增长，离开光幕停止"
+        or "点击增加力量与经验 · 训练区自动敲 · 矿道入口选择矿道"
 end
-for _,key in {"Power","TrainingGain","AutoMining","Coins","Ore","DeepestLayer"}do p:GetAttributeChangedSignal(key):Connect(refresh)end
-for i=1,#cfg.Layers do p:GetAttributeChangedSignal("Gate"..i.."HP"):Connect(refresh)end
-refresh()
-local mouse=p:GetMouse()
-local hovered
-local function findTarget(part)
-    if not part then return nil end
-    if part:HasTag("MineTarget") or part:HasTag("TrainingTarget")then return part end
-    local model=part:FindFirstAncestorOfClass("Model")
-    local target=model and model:FindFirstChild("Target")
-    return target and (target:HasTag("MineTarget") or target:HasTag("TrainingTarget")) and target or nil
-end
-local function send()
+for _,key in {"Power","TrainingGain","Ore","RouteIndex","Overheated"} do player:GetAttributeChangedSignal(key):Connect(refresh) end
+for i=1,10 do player:GetAttributeChangedSignal("Gate"..i.."HP"):Connect(refresh) end
+hud.ReturnToCamp.Activated:Connect(function()wire.ReturnToCamp:FireServer()end)
+local function practice(position)
+    local inset=GuiService:GetGuiInset()
+    effects:ClickRing(position-inset)
     wire.Practice:FireServer()
 end
 UIS.InputBegan:Connect(function(input,processed)
     if processed then return end
-    if input.UserInputType==Enum.UserInputType.MouseButton1 then
-        local inset = GuiService:GetGuiInset()
-        feedbackEffects:ClickRing(UIS:GetMouseLocation()-inset)
-        send()
-    elseif input.KeyCode==Enum.KeyCode.F or input.KeyCode==Enum.KeyCode.ButtonX then send()end
+    if input.UserInputType==Enum.UserInputType.MouseButton1 then practice(UIS:GetMouseLocation())
+    elseif input.KeyCode==Enum.KeyCode.F or input.KeyCode==Enum.KeyCode.ButtonX then wire.Practice:FireServer() end
 end)
-UIS.TouchTapInWorld:Connect(function(pos,processed)
-    if processed then return end
-    local inset = GuiService:GetGuiInset()
-    feedbackEffects:ClickRing(pos-inset)
-    send()
-end)
-Run.RenderStepped:Connect(function()
-    hovered=findTarget(mouse.Target)
-    if hovered and hovered:GetAttribute("TargetKind")=="Training" and targetText:GetAttribute("Busy")~=true then
-        targetText.Text="走进光幕自动练习  ·  点击额外 +1 力量"
-    elseif hovered and targetText:GetAttribute("Busy")~=true then
-        local layer=hovered:GetAttribute("LayerIndex")
-        local hp=hovered:GetAttribute("TargetKind")=="Gate" and p:GetAttribute("Gate"..layer.."HP")or hovered:GetAttribute("MaxHealth")
-        targetText.Text=hp>0 and ("靠近自动敲击  ·  耐久 "..hp.."  ·  每次伤害 "..(p:GetAttribute("Power")or 1))or ""
-    elseif not hovered and targetText:GetAttribute("Busy")~=true then targetText.Text=""end
-end)
-local noticeId=0
-local function announce(value)
-    noticeId+=1;local id=noticeId;toast.Text=value
-    task.delay(2.2,function()if noticeId==id then toast.Text=""end end)
+UIS.TouchTapInWorld:Connect(function(position,processed)if not processed then practice(position) end end)
+local function showDrops(id,items)
+    clearDrops();batchId=id
+    for index,item in items do
+        local hidden=item.Secret~=nil
+        local ore=not hidden and Balance.Minerals[item.Id]
+        local color=hidden and Color3.fromRGB(209,129,252) or Color3.fromHex(ore.Hex)
+        local holder=Instance.new("Model");holder.Name=hidden and Balance.Secrets[item.Secret].Name or ore.Name
+        local visual=game.ReplicatedStorage.MiningVisualAssets.OreRock:Clone()
+        visual.Name="Visual";visual:ScaleTo(hidden and .55 or .40)
+        visual:PivotTo(CFrame.new(item.Position)*CFrame.Angles(0,index*.72,0))
+        visual.Parent=holder
+        for _,part in visual:GetDescendants() do
+            if part:IsA("BasePart") then part.CanCollide=false;part.CanQuery=false;part.CanTouch=false;part.Color=color end
+        end
+        local anchor=Instance.new("Part")
+        anchor.Name="Pickup";anchor.Size=Vector3.one;anchor.Transparency=1;anchor.Anchored=true
+        anchor.CanCollide=false;anchor.CanQuery=false;anchor.Position=item.Position+Vector3.new(0,1.3,0);anchor.Parent=holder
+        local glow=Instance.new("Part")
+        glow.Name="Glow";glow.Shape=Enum.PartType.Cylinder;glow.Size=Vector3.new(.08,2.8,2.8)
+        glow.CFrame=CFrame.new(item.Position-Vector3.new(0,1.2,0))*CFrame.Angles(0,0,math.pi/2)
+        glow.Color=hidden and color or ore.Rank>=8 and Color3.fromRGB(255,209,105) or Color3.fromRGB(203,231,230)
+        glow.Material=Enum.Material.Neon;glow.Transparency=hidden and .45 or .75;glow.Anchored=true
+        glow.CanCollide=false;glow.CanQuery=false;glow.CanTouch=false;glow.Parent=holder
+        local light=Instance.new("PointLight");light.Range=8;light.Brightness=hidden and 1.5 or .35;light.Color=glow.Color;light.Parent=anchor
+        local label=Instance.new("BillboardGui")
+        label.Name="Price";label.Size=UDim2.fromScale(3.7,2);label.StudsOffset=Vector3.new(0,2,0);label.MaxDistance=75;label.Parent=anchor
+        local text=Instance.new("TextLabel")
+        text.Size=UDim2.fromScale(1,1);text.BackgroundTransparency=1;text.TextScaled=true;text.Font=Enum.Font.FredokaOne
+        text.TextColor3=hidden and Color3.fromRGB(237,204,255) or Color3.fromRGB(255,245,211)
+        text.TextStrokeColor3=Color3.fromRGB(24,40,50);text.TextStrokeTransparency=0
+        text.Text=holder.Name.."\n"..(hidden and "隐藏发现" or (Big.Format(item.Value).." 币"))
+        text.Parent=label
+        local prompt=Instance.new("ProximityPrompt")
+        prompt.ActionText="拾取";prompt.ObjectText=holder.Name;prompt.HoldDuration=0;prompt.RequiresLineOfSight=false
+        prompt.MaxActivationDistance=9;prompt.Parent=anchor
+        prompt.Triggered:Connect(function()wire.Action:FireServer("Pickup",id,index)end)
+        holder.Parent=drops;dropObjects[index]=holder
+        if hidden then table.insert(rainbow,{glow=glow,light=light}) end
+    end
 end
 wire.Feedback.OnClientEvent:Connect(function(mode,a,b,c)
-    if mode=="note"then announce(a)
-    elseif mode=="sale"then announce("已售出 "..b.." 块矿石  +"..a.." 金币")
-    elseif mode=="practice" then feedbackEffects:Power(b)
-    elseif mode=="train" then feedbackEffects:Stroke(a,b,c)
-    elseif mode=="hit"then
-        feedbackEffects:Stroke(a,1,require(game.ReplicatedStorage.Shared.MiningStyle).AutoSwingSpeed)
-        targetText:SetAttribute("Busy",true);targetText.Text="剩余耐久 "..b.."/"..c
-        task.delay(.5,function()targetText:SetAttribute("Busy",false)end)
+    if mode=="note" then announce(a)
+    elseif mode=="sale" then announce("售出 "..b.." 块矿石 · +"..Big.Format(a).." 矿币")
+    elseif mode=="practice" then effects:Power(Big.Format(b))
+    elseif mode=="train" then effects:Stroke(a,Big.Format(b),c)
+    elseif mode=="hit" then
+        effects:Stroke(a,0,Style.AutoSwingSpeed)
+        hud.Status.Target.Text="岩壁 "..Big.Format(b).." / "..Big.Format(c)
+    elseif mode=="reveal" then showDrops(a,b)
+    elseif mode=="clearDrops" then clearDrops()
+    elseif mode=="pickup" and a==batchId then
+        if dropObjects[b] then dropObjects[b]:Destroy();dropObjects[b]=nil end
+    end
+end)
+local phase=0
+Run.RenderStepped:Connect(function(dt)
+    phase+=dt
+    for _,record in rainbow do
+        if record.glow.Parent then
+            local color=Color3.fromHSV((phase*.15)%1,.5,1)
+            record.glow.Color=color;record.light.Color=color
+        end
     end
 end)
 local function view(character)
     local root=character:WaitForChild("HumanoidRootPart",10)
-    if not root or p.Character~=character then return end
-    task.wait(.2)
-    local cam=workspace.CurrentCamera
-    cam.CFrame=CFrame.lookAt(root.Position+Vector3.new(0,10,24),root.Position+Vector3.new(0,2,-5))
+    if root and player.Character==character then
+        task.wait(.2)
+        workspace.CurrentCamera.CFrame=CFrame.lookAt(root.Position+Vector3.new(0,10,24),root.Position+Vector3.new(0,2,-5))
+    end
 end
-if p.Character then task.spawn(view,p.Character)end
-p.CharacterAdded:Connect(view)
+player.CharacterAdded:Connect(view)
+if player.Character then task.spawn(view,player.Character) end
+refresh()

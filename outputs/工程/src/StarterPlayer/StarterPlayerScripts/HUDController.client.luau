@@ -4,17 +4,18 @@ local GuiService=game:GetService("GuiService")
 local shared=game.ReplicatedStorage:WaitForChild("Shared")
 local Theme=require(shared:WaitForChild("HUDTheme"))
 local Layout=require(shared:WaitForChild("HUDLayout"))
+local Big=require(shared.BigInteger)
 local p=Players.LocalPlayer
-local gui=p:WaitForChild("PlayerGui"):WaitForChild("MiningHUD")
+local gui=p:WaitForChild("PlayerGui"):WaitForChild("MiningHUD",30)
+if not gui then warn("MiningHUD did not replicate");return end
 local root=gui:WaitForChild("Root")
 local connections={}
 local menuOpen,offersOpen=false,false
 local function connect(event,fn)table.insert(connections,event:Connect(fn))end
 local function comma(value)
-    local text=tostring(math.floor(tonumber(value)or 0))
-    local result,n=text,0
-    repeat result,n=result:gsub("^(-?%d+)(%d%d%d)","%1,%2")until n==0
-    return result
+    local text=tostring(value or 0)
+    if Big.IsValid(text) then return Big.Format(text) end
+    return "0"
 end
 local function refresh()
     root.ResourceList.BackpackRow.Value.Text=comma(p:GetAttribute("Ore")).." / "..comma(p:GetAttribute("Capacity")or 5)
@@ -24,12 +25,14 @@ local function refresh()
     head.Power.Text="力量 "..comma(p:GetAttribute("Power")or 1)
     local live=p:GetAttribute("Level")~=nil and p:GetAttribute("XP")~=nil and p:GetAttribute("NextXP")~=nil
     local level=live and p:GetAttribute("Level")or Theme.Preview.Level
-    local xp=live and p:GetAttribute("XP")or Theme.Preview.XP
-    local maximum=math.max(1,live and p:GetAttribute("NextXP")or Theme.Preview.NextXP)
+    local xpRaw=live and p:GetAttribute("XP")or tostring(Theme.Preview.XP)
+    local nextRaw=live and p:GetAttribute("NextXP")or tostring(Theme.Preview.NextXP)
+    local xp=tonumber(xpRaw)or 0
+    local maximum=math.max(1,tonumber(nextRaw)or 1)
     head.LevelBadge.Label.Text="等级 "..comma(level)
-    head.ProgressTrack.ProgressText.Text=comma(xp).." / "..comma(maximum)
+    head.ProgressTrack.ProgressText.Text=comma(xpRaw).." / "..comma(nextRaw)
     head.ProgressTrack.Fill.Size=UDim2.fromScale(math.clamp(xp/maximum,0,1),1)
-    head.Remaining.Text="还差 "..comma(math.max(0,maximum-xp)).." 升级"..(live and ""or " · 示例")
+    head.Remaining.Text=level>=50 and ((p:GetAttribute("Rebirths")or 0)>=20 and "已满级 · 继续勘探" or "50 级 · 可以重生") or ("还差 "..Big.Format(Big.Subtract(tostring(nextRaw),tostring(xpRaw))).." 升级"..(live and ""or " · 示例"))
     head:SetAttribute("UsesPreviewProgress",not live)
 end
 local function resize()
@@ -51,9 +54,6 @@ connect(root.OffersToggle.Activated,function()
     offersOpen=not offersOpen;menuOpen=false
     root.OffersToggle.Label.Text=offersOpen and "收起"or "礼包";resize()
 end)
-for _,item in Theme.Menus do
-    connect(root.MenuGrid[item.Id].Activated,function()preview(item.Label.." · 界面展示，功能稍后接入")end)
-end
 for _,tile in root.PowerOffers:GetChildren()do
     if tile:IsA("TextButton")then connect(tile.Activated,function()preview("力量礼包展示 · 暂未开放购买")end)end
 end
