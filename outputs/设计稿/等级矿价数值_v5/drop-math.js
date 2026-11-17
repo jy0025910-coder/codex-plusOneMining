@@ -1,6 +1,5 @@
 
-// Weighted draws without replacement. Five visible minerals are guaranteed.
-const probabilityCache = new Map();
+// Five independent draws from the complete weighted mineral pool.
 function mineralPool(mineRoute, depth) {
     const base=[30,22,16,11,8,5,3.5,2.3,1.4,.8];
     const deep=[22,19,16,12,10,8,5,4,2.5,1.5];
@@ -13,31 +12,16 @@ function mineralPool(mineRoute, depth) {
         *amounts[ore.id-1]/totals[ore.route]}));
 }
 function drawFive(rows, random=Math.random) {
-    const available=rows.filter(row=>row.p>0).map(row=>({...row}));
-    const picked=[];
-    for(let i=0;i<5;i++){
-        const total=available.reduce((sum,row)=>sum+row.p,0);
+    const total=rows.reduce((sum,row)=>sum+row.p,0);
+    return Array.from({length:5},()=>{
         let ticket=random()*total;
-        let index=available.findIndex(row=>{ticket-=row.p;return ticket<0});
-        if(index<0)index=available.length-1;
-        picked.push(available.splice(index,1)[0]);
-    }
-    return picked;
+        for(const row of rows){
+            ticket-=row.p;
+            if(ticket<0)return row;
+        }
+        return rows.findLast(row=>row.p>0);
+    });
 }
-function inclusionOdds(mineRoute, depth) {
-    const key=[mineRoute,depth,config.layers,config.foreign,...config.weights].join(',');
-    if(probabilityCache.has(key))return probabilityCache.get(key);
-    const rows=mineralPool(mineRoute,depth),counts=Array(50).fill(0),trials=20000;
-    let seed=19349663+mineRoute*73856093+depth*83492791;
-    function random(){
-        seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;
-        return (seed>>>0)/4294967296;
-    }
-    for(let n=0;n<trials;n++){
-        for(const row of drawFive(rows,random))counts[row.ore.id-1]++;
-    }
-    const result=counts.map(count=>count/trials);
-    if(probabilityCache.size>=60)probabilityCache.delete(probabilityCache.keys().next().value);
-    probabilityCache.set(key,result);
-    return result;
+function wallAppearanceOdds(mineRoute, depth) {
+    return mineralPool(mineRoute,depth).map(row=>-Math.expm1(5*Math.log1p(-row.p)));
 }

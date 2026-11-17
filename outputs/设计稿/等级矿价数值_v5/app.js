@@ -43,7 +43,7 @@ function renderWall(){
   const name=secret?secrets[item.hidden][0]:ore.name;
   return '<button class="'+(secret?'hiddenLoot':ore.rank>=7?'rare':'')+'" data-loot="'+i+'" '+(item.taken||(bag.length>=5&&!secret)?'disabled':'')+'><div class="rock" style="--rock:#'+(ore?.hex??'b999e7')+'"></div><b>'+name+'</b><small>'+(secret?'隐藏 · 彩光':ore.rank>=7?'稀有 · 金光':'普通 · 柔光')+'</small><b>'+(secret?secrets[item.hidden][3]:compact(mineralPrice(ore.id,item.sourceRoute,item.sourceDepth))+' 币')+'</b><small>'+(item.taken?'已拾取':'拾取')+'</small></button>';
  }).join('');
- $('lootStatus').textContent=loot?'固定五种矿石可逐件拾取。额外隐藏款直接进入收藏。':'';
+ $('lootStatus').textContent=loot?'固定五块矿石，可重复可逐件拾取。额外隐藏款直接进入收藏。':'';
  $('bag').textContent='背包 '+bag.length+' / 5　·　矿币 '+compact(wallet)+'　·　隐藏收藏 '+collection.size+' / 10';
  const p=chance().pct/100;
  $('luck').textContent='隐藏基础单次率 '+percent(p)+'　·　每墙至少一件 '+percent(atLeast(p));
@@ -55,7 +55,7 @@ function renderCurve(){
  }).join('');
 }
 function renderMinerals(){
- const search=$('search').value.trim(),filter=+$('filter').value,inclusion=inclusionOdds(route,layer);
+ const search=$('search').value.trim(),filter=+$('filter').value,inclusion=wallAppearanceOdds(route,layer);
  $('oreRows').innerHTML=pool().filter(({ore})=>(filter<0||ore.route===filter)&&(ore.name+String(ore.id).padStart(3,'0')).includes(search)).map(({ore,p})=>{
   const chancePerSlot=p;
   return '<tr><td><details><summary>'+ore.name+'</summary><p>'+ore.fact+'</p></details></td><td>'+themes[ore.route].name+'</td><td><input class="price" aria-label="'+ore.name+'价格" data-price="'+ore.id+'" inputmode="numeric" value="'+config.prices[ore.id-1]+'"><small>'+compact(mineralPrice(ore.id,route,layer))+' 本层矿币</small></td><td><input class="weight" aria-label="'+ore.name+'权重" data-weight="'+ore.id+'" type="number" min=".01" max="10000" step="any" value="'+config.weights[ore.id-1]+'"></td><td>'+percent(chancePerSlot)+'</td><td>'+percent(inclusion[ore.id-1])+'</td></tr>';

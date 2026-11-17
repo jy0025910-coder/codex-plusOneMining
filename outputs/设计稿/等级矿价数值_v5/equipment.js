@@ -16,8 +16,8 @@ function mineralPrice(oreId, mineRoute, depth) {
     return BigInt(config.prices[oreId-1])*routePriceFactors[mineRoute]*2n**BigInt(depth-1);
 }
 function expectedOreValue(mineRoute, depth) {
-    const inclusion=inclusionOdds(mineRoute,depth);
-    return catalog.minerals.reduce((sum,ore)=>sum+Number(mineralPrice(ore.id,mineRoute,depth))*inclusion[ore.id-1],0)/5;
+    return mineralPool(mineRoute,depth).reduce((sum,row)=>
+        sum+Number(mineralPrice(row.ore.id,mineRoute,depth))*row.p,0);
 }
 function gearPrice(index) {
     if(index===0||index===9) return 0n;
