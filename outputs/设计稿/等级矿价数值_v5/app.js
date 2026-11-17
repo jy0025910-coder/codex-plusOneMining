@@ -33,7 +33,7 @@ function renderWall(){
  $('remaining').textContent='剩余 '+compact(remaining)+' / '+compact(hpAt(route,layer))+'　'+(playerValid()?timeText(required(remaining)):'请输入正整数力量。');
  $('auto').disabled=!!loot||!playerValid()||timer!==null;
  $('resolve').disabled=!!loot||!playerValid();
- $('collect').disabled=!loot||loot.every(o=>o.taken)||bag.length>=5;
+ $('collect').disabled=!loot||loot.every(o=>o.taken)||(bag.length>=5&&!loot.some(o=>o.hidden!==undefined&&!o.taken));
  $('sell').disabled=!bag.length;
  $('batch').textContent=loot?loot.length+' 件掉落':'等待破墙';
  if(!loot)$('loot').innerHTML='<p class="hint">墙后藏着什么？<br>敲开后就能看见名称、价格和稀有光效。</p>';
@@ -41,12 +41,12 @@ function renderWall(){
   const secret=item.hidden!==undefined;
   const ore=secret?null:catalog.minerals[item.oreId-1];
   const name=secret?secrets[item.hidden][0]:ore.name;
-  return '<button class="'+(secret?'hiddenLoot':ore.rank>=7?'rare':'')+'" data-loot="'+i+'" '+(item.taken||bag.length>=5?'disabled':'')+'><div class="rock" style="--rock:#'+(ore?.hex??'b999e7')+'"></div><b>'+name+'</b><small>'+(secret?'隐藏 · 彩光':ore.rank>=7?'稀有 · 金光':'普通 · 柔光')+'</small><b>'+(secret?secrets[item.hidden][3]:compact(mineralPrice(ore.id,item.sourceRoute,item.sourceDepth))+' 币')+'</b><small>'+(item.taken?'已拾取':'拾取')+'</small></button>';
+  return '<button class="'+(secret?'hiddenLoot':ore.rank>=7?'rare':'')+'" data-loot="'+i+'" '+(item.taken||(bag.length>=5&&!secret)?'disabled':'')+'><div class="rock" style="--rock:#'+(ore?.hex??'b999e7')+'"></div><b>'+name+'</b><small>'+(secret?'隐藏 · 彩光':ore.rank>=7?'稀有 · 金光':'普通 · 柔光')+'</small><b>'+(secret?secrets[item.hidden][3]:compact(mineralPrice(ore.id,item.sourceRoute,item.sourceDepth))+' 币')+'</b><small>'+(item.taken?'已拾取':'拾取')+'</small></button>';
  }).join('');
- $('lootStatus').textContent=loot?'可以逐件拾取，或装满五格后回营出售。':'';
+ $('lootStatus').textContent=loot?'固定五种矿石可逐件拾取。额外隐藏款直接进入收藏。':'';
  $('bag').textContent='背包 '+bag.length+' / 5　·　矿币 '+compact(wallet)+'　·　隐藏收藏 '+collection.size+' / 10';
  const p=chance().pct/100;
- $('luck').textContent='当前单矿位隐藏率 '+percent(p)+'　·　每墙至少一件 '+percent(atLeast(p));
+ $('luck').textContent='隐藏基础单次率 '+percent(p)+'　·　每墙至少一件 '+percent(atLeast(p));
 }
 function renderCurve(){
  $('curveRows').innerHTML=Array.from({length:config.layers},(_,i)=>{
@@ -55,17 +55,17 @@ function renderCurve(){
  }).join('');
 }
 function renderMinerals(){
- const search=$('search').value.trim(),filter=+$('filter').value,pHidden=chance().pct/100;
+ const search=$('search').value.trim(),filter=+$('filter').value,inclusion=inclusionOdds(route,layer);
  $('oreRows').innerHTML=pool().filter(({ore})=>(filter<0||ore.route===filter)&&(ore.name+String(ore.id).padStart(3,'0')).includes(search)).map(({ore,p})=>{
-  const chancePerSlot=(1-pHidden)*p;
-  return '<tr><td><details><summary>'+ore.name+'</summary><p>'+ore.fact+'</p></details></td><td>'+themes[ore.route].name+'</td><td><input class="price" aria-label="'+ore.name+'价格" data-price="'+ore.id+'" inputmode="numeric" value="'+config.prices[ore.id-1]+'"><small>'+compact(mineralPrice(ore.id,route,layer))+' 本层矿币</small></td><td><input class="weight" aria-label="'+ore.name+'权重" data-weight="'+ore.id+'" type="number" min=".01" max="10000" step="any" value="'+config.weights[ore.id-1]+'"></td><td>'+percent(chancePerSlot)+'</td><td>'+percent(atLeast(chancePerSlot))+'</td></tr>';
+  const chancePerSlot=p;
+  return '<tr><td><details><summary>'+ore.name+'</summary><p>'+ore.fact+'</p></details></td><td>'+themes[ore.route].name+'</td><td><input class="price" aria-label="'+ore.name+'价格" data-price="'+ore.id+'" inputmode="numeric" value="'+config.prices[ore.id-1]+'"><small>'+compact(mineralPrice(ore.id,route,layer))+' 本层矿币</small></td><td><input class="weight" aria-label="'+ore.name+'权重" data-weight="'+ore.id+'" type="number" min=".01" max="10000" step="any" value="'+config.weights[ore.id-1]+'"></td><td>'+percent(chancePerSlot)+'</td><td>'+percent(inclusion[ore.id-1])+'</td></tr>';
  }).join('');
 }
 function renderSecrets(){
  const odds=chance(),p=odds.pct/100;
  $('hiddenTotal').textContent='每墙至少一次 '+percent(atLeast(p));
  $('formula').textContent='单矿位隐藏率 = '+odds.parts.map((n,i)=>['基础 '+n.toFixed(2)+'%','矿道 ×'+n,'深度 ×'+n.toFixed(2),'镐子 ×'+n.toFixed(2),'力量 ×'+n.toFixed(2),'秘技 ×'+n.toFixed(2)][i]).join(' × ')+'，封顶 '+config.cap+'%。';
- $('secretRows').innerHTML=hiddenPool().map(({secret,id,p:share})=>'<tr><td>'+secret[0]+'<small>'+secret[1]+'</small></td><td>'+themes[secret[4]].name+'</td><td>'+secret[2]+'</td><td>'+percent(p*share)+'</td><td>'+percent(atLeast(p*share))+'</td></tr>').join('');
+ $('secretRows').innerHTML=hiddenPool().map(({secret,id,p:share})=>'<tr><td>'+secret[0]+'<small>'+secret[1]+'</small></td><td>'+themes[secret[4]].name+'</td><td>'+secret[2]+'</td><td>'+percent(atLeast(p)*share)+'</td><td>'+'1 件'+'</td></tr>').join('');
 }
 function render(){
  $('routes').innerHTML=themes.map((theme,i)=>'<button class="'+(route===i?'active':'')+'" data-route="'+i+'" style="--tint:'+theme.color+'"><b>'+theme.label+'矿道</b><small>'+theme.name+'</small><small>首墙 '+compact(hpAt(i,1))+' · 幸运 ×'+theme.bonus+'</small></button>').join('');
@@ -76,10 +76,8 @@ function render(){
 function breakWall(){
  stop();remaining=0n;
  const minerals=pool(),hidden=hiddenPool(),p=chance().pct/100;
- loot=Array.from({length:3+Math.floor(Math.random()*3)},()=>{
-  if(Math.random()<p)return {hidden:sample(hidden).id,taken:false};
-  return {oreId:sample(minerals).ore.id,sourceRoute:route,sourceDepth:layer,taken:false};
- });
+ loot=drawFive(minerals).map(({ore})=>({oreId:ore.id,sourceRoute:route,sourceDepth:layer,taken:false}));
+ if(Math.random()<atLeast(p))loot.push({hidden:sample(hidden).id,taken:false});
  renderWall();
 }
 function hit(){
@@ -100,7 +98,11 @@ $('auto').onclick=()=>{timer=setInterval(hit,380);hit()};
 $('resolve').onclick=breakWall;$('retry').onclick=reset;
 $('suggest').onclick=()=>{$('power').value=recommendedPower(hpAt(route,layer)).toString();stop();render()};
 function take(i){
- if(!loot||bag.length>=5||loot[i].taken)return;
+ if(!loot||loot[i].taken)return;
+ if(loot[i].hidden!==undefined){
+  collection.add(loot[i].hidden);loot[i].taken=true;return;
+ }
+ if(bag.length>=5)return;
  bag.push({...loot[i]});loot[i].taken=true;
 }
 $('loot').onclick=e=>{const b=e.target.closest('[data-loot]');if(b){take(+b.dataset.loot);renderWall()}};

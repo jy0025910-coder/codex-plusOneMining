@@ -48,16 +48,12 @@ function chance(){
  const parts=[config.baseHidden,themes[route].bonus,1+.18*(layer-1),1+.06*(tool-1),1+Math.min(1,Math.log10(Math.max(1,power))/12),$('skill').value==='star'?1.25:1];
  return {parts,pct:Math.min(config.cap,parts.reduce((a,b)=>a*b,1))};
 }
-function pool(){
- const amounts=catalog.minerals.map(o=>config.weights[o.id-1]*Math.pow(1+.15*(layer-1),o.rank));
- const sums=themes.map((_,r)=>catalog.minerals.filter(o=>o.route===r).reduce((s,o)=>s+amounts[o.id-1],0));
- return catalog.minerals.map(o=>({ore:o,p:(o.route===route?1-config.foreign/100:config.foreign/400)*amounts[o.id-1]/sums[o.route]}));
-}
+function pool(){ return mineralPool(route,layer); }
 function hiddenPool(){
  const weights=secrets.map(s=>s[4]===route?4:1),sum=weights.reduce((a,b)=>a+b);
  return secrets.map((s,i)=>({secret:s,id:i,p:weights[i]/sum}));
 }
-function atLeast(p){return [3,4,5].reduce((s,n)=>s-Math.expm1(n*Math.log1p(-p)),0)/3}
+function atLeast(p){return -Math.expm1(5*Math.log1p(-p));}
 function sample(rows){
  let t=Math.random();for(const row of rows){t-=row.p;if(t<0)return row}return rows.at(-1);
 }

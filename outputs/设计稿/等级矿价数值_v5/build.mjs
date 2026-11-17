@@ -17,7 +17,7 @@ const image = (file, mime) => 'data:image/' + mime + ';base64,' + fs.readFileSyn
 const parts = {
     '__STYLE__': text('style.css'),
     '__CATALOG__': JSON.stringify(catalog),
-    '__MODEL__': text('balance.js') + '\n' + text('economy.js') + '\n' + text('equipment.js'),
+    '__MODEL__': text('balance.js') + '\n' + text('economy.js') + '\n' + text('equipment.js') + '\n' + text('drop-math.js'),
     '__APP__': text('app.js') + '\n' + text('progression.js'),
     '__WALL_PHOTO__': image(path.join(dir, '../../工程/资产/峡谷围墙_整图_v3/Renders/Studio_Wall_Close.jpg'), 'jpeg'),
     '__TOOLS_PLATE__': image(path.join(previous, '十把矿镐_原画.png'), 'png')

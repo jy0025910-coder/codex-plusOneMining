@@ -16,12 +16,8 @@ function mineralPrice(oreId, mineRoute, depth) {
     return BigInt(config.prices[oreId-1])*routePriceFactors[mineRoute]*2n**BigInt(depth-1);
 }
 function expectedOreValue(mineRoute, depth) {
-    const amounts=catalog.minerals.map(ore=>config.weights[ore.id-1]*(1+.15*(depth-1))**ore.rank);
-    const totals=themes.map((_,r)=>catalog.minerals.filter(ore=>ore.route===r).reduce((sum,ore)=>sum+amounts[ore.id-1],0));
-    return catalog.minerals.reduce((sum,ore)=>{
-        const share=ore.route===mineRoute?1-config.foreign/100:config.foreign/400;
-        return sum+Number(mineralPrice(ore.id,mineRoute,depth))*share*amounts[ore.id-1]/totals[ore.route];
-    },0);
+    const inclusion=inclusionOdds(mineRoute,depth);
+    return catalog.minerals.reduce((sum,ore)=>sum+Number(mineralPrice(ore.id,mineRoute,depth))*inclusion[ore.id-1],0)/5;
 }
 function gearPrice(index) {
     if(index===0||index===9) return 0n;
