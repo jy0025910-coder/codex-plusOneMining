@@ -41,9 +41,9 @@ function renderWall(){
   const secret=item.hidden!==undefined;
   const ore=secret?null:catalog.minerals[item.oreId-1];
   const name=secret?secrets[item.hidden][0]:ore.name;
-  return '<button class="'+(secret?'hiddenLoot':ore.rank>=7?'rare':'')+'" data-loot="'+i+'" '+(item.taken||(bag.length>=5&&!secret)?'disabled':'')+'><div class="rock" style="--rock:#'+(ore?.hex??'b999e7')+'"></div><b>'+name+'</b><small>'+(secret?'隐藏 · 彩光':ore.rank>=7?'稀有 · 金光':'普通 · 柔光')+'</small><b>'+(secret?secrets[item.hidden][3]:compact(mineralPrice(ore.id,item.sourceRoute,item.sourceDepth))+' 币')+'</b><small>'+(item.taken?'已拾取':'拾取')+'</small></button>';
+  return '<button class="'+(secret?'hiddenLoot':ore.rank>=7?'rare':'')+'" data-loot="'+i+'" '+(item.taken||(bag.length>=5&&!secret)?'disabled':'')+'><div class="rock" style="--rock:#'+(ore?.hex??'b999e7')+'"></div><b>'+name+'</b><small>'+(secret?'隐藏 · 彩光':ore.rank>=7?'稀有 · 金光':'普通 · 柔光')+'</small><b>'+(secret?secrets[item.hidden][3]:compact(droppedValue(item))+' 币')+'</b><small>'+(item.taken?'已拾取':'拾取')+'</small></button>';
  }).join('');
- $('lootStatus').textContent=loot?'固定五块矿石，可重复可逐件拾取。额外隐藏款直接进入收藏。':'';
+ $('lootStatus').textContent=loot?'固定五块矿石，允许重复，可逐件拾取。额外隐藏款直接进入收藏。':'';
  $('bag').textContent='背包 '+bag.length+' / 5　·　矿币 '+compact(wallet)+'　·　隐藏收藏 '+collection.size+' / 10';
  const p=chance().pct/100;
  $('luck').textContent='隐藏基础单次率 '+percent(p)+'　·　每墙至少一件 '+percent(atLeast(p));
@@ -58,7 +58,7 @@ function renderMinerals(){
  const search=$('search').value.trim(),filter=+$('filter').value,inclusion=wallAppearanceOdds(route,layer);
  $('oreRows').innerHTML=pool().filter(({ore})=>(filter<0||ore.route===filter)&&(ore.name+String(ore.id).padStart(3,'0')).includes(search)).map(({ore,p})=>{
   const chancePerSlot=p;
-  return '<tr><td><details><summary>'+ore.name+'</summary><p>'+ore.fact+'</p></details></td><td>'+themes[ore.route].name+'</td><td><input class="price" aria-label="'+ore.name+'价格" data-price="'+ore.id+'" inputmode="numeric" value="'+config.prices[ore.id-1]+'"><small>'+compact(mineralPrice(ore.id,route,layer))+' 本层矿币</small></td><td><input class="weight" aria-label="'+ore.name+'权重" data-weight="'+ore.id+'" type="number" min=".01" max="10000" step="any" value="'+config.weights[ore.id-1]+'"></td><td>'+percent(chancePerSlot)+'</td><td>'+percent(inclusion[ore.id-1])+'</td></tr>';
+  return '<tr><td><details><summary>'+ore.name+'</summary><p>'+ore.fact+'</p></details></td><td>'+themes[ore.route].name+'</td><td><input class="price" aria-label="'+ore.name+'价格" data-price="'+ore.id+'" inputmode="numeric" value="'+config.prices[ore.id-1]+'"><small>'+compact(qualityValue(ore.id,route,layer))+' 本层矿币</small></td><td><input class="weight" aria-label="'+ore.name+'权重" data-weight="'+ore.id+'" type="number" min=".01" max="10000" step="any" value="'+config.weights[ore.id-1]+'"></td><td>'+percent(chancePerSlot)+'</td><td>'+percent(inclusion[ore.id-1])+'</td></tr>';
  }).join('');
 }
 function renderSecrets(){
@@ -76,7 +76,7 @@ function render(){
 function breakWall(){
  stop();remaining=0n;
  const minerals=pool(),hidden=hiddenPool(),p=chance().pct/100;
- loot=drawFive(minerals).map(({ore})=>({oreId:ore.id,sourceRoute:route,sourceDepth:layer,taken:false}));
+ loot=drawFive(minerals).map(({ore})=>({oreId:ore.id,sourceRoute:route,sourceDepth:layer,qualityPercent:qualityPercent(),unitPrice:qualityValue(ore.id,route,layer).toString(),taken:false}));
  if(Math.random()<atLeast(p))loot.push({hidden:sample(hidden).id,taken:false});
  renderWall();
 }
@@ -88,7 +88,7 @@ function hit(){
 function sync(){
  for(const id of ['layers','growth','routeGrowth','foreign','baseHidden','cap'])$(id).value=config[id];
 }
-$('tool').innerHTML=catalog.tools.map((tool,i)=>'<option value="'+i+'">'+tool.name+' · '+tool.multiplier+'×</option>').join('');
+$('tool').innerHTML=catalog.tools.map((tool,i)=>'<option value="'+i+'">'+tool.name+' · 力量 '+tool.multiplier+'× / 品质 '+toolQualityPercent[i]/100+'×</option>').join('');
 $('filter').innerHTML+=themes.map((theme,i)=>'<option value="'+i+'">'+theme.name+'</option>').join('');
 $('routes').onclick=e=>{const b=e.target.closest('[data-route]');if(b){route=+b.dataset.route;layer=1;reset()}};
 $('depth').oninput=()=>{layer=+$('depth').value;reset()};
@@ -109,7 +109,7 @@ $('loot').onclick=e=>{const b=e.target.closest('[data-loot]');if(b){take(+b.data
 $('collect').onclick=()=>{loot?.forEach((_,i)=>take(i));renderWall()};
 $('sell').onclick=()=>{
  const multiplier=$('skill').value==='money2'?2n:$('skill').value==='money3'?3n:1n;
- const value=bag.filter(item=>item.oreId).reduce((sum,item)=>sum+mineralPrice(item.oreId,item.sourceRoute,item.sourceDepth),0n)*multiplier;
+ const value=bag.filter(item=>item.oreId).reduce((sum,item)=>sum+droppedValue(item),0n)*multiplier;
  const special=bag.filter(item=>item.hidden!==undefined).length;
  bag.filter(item=>item.hidden!==undefined).forEach(item=>collection.add(item.hidden));
  wallet+=value;bag=[];renderWall();
